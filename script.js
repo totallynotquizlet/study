@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         touchEndX: 0,
         touchEndY: 0,
         settingsBeforeEdit: null, // NEW: To track changes in settings modal
+        isCreateDeckDirty: false, // NEW: For unsaved changes
+        pendingModeChange: null, // NEW: For unsaved changes
     };
 
     // --- DOM ELEMENTS ---
@@ -61,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         deckTitleInput: document.getElementById('deck-title-input'), // NEW
         toggleManualButton: document.getElementById('toggle-manual-button'), // NEW
         togglePasteButton: document.getElementById('toggle-paste-button'), // NEW
+        clearCreateButton: document.getElementById('clear-create-button'), // NEW
         manualInputSection: document.getElementById('manual-input-section'), // NEW
         pasteInputSection: document.getElementById('paste-input-section'), // NEW
         cardEditorList: document.getElementById('card-editor-list'), // NEW
@@ -153,7 +156,18 @@ document.addEventListener('DOMContentLoaded', () => {
         settingDeckTitle: document.getElementById('setting-deck-title'),
         settingToggleShuffle: document.getElementById('setting-toggle-shuffle'),
         settingToggleStartWith: document.getElementById('setting-toggle-start-with'),
-        copyDeckButton: document.getElementById('copy-deck-button') // NEW
+        copyDeckButton: document.getElementById('copy-deck-button'), // NEW
+
+        // NEW: Clear Confirm Modal Elements
+        clearConfirmModalOverlay: document.getElementById('clear-confirm-modal-overlay'),
+        clearConfirmButton: document.getElementById('clear-confirm-button'),
+        clearCancelButton: document.getElementById('clear-cancel-button'),
+
+        // NEW: Unsaved Changes Modal Elements
+        unsavedChangesModalOverlay: document.getElementById('unsaved-changes-modal-overlay'),
+        unsavedSaveButton: document.getElementById('unsaved-save-button'),
+        unsavedDiscardButton: document.getElementById('unsaved-discard-button'),
+        unsavedCancelButton: document.getElementById('unsaved-cancel-button'),
     };
 
     // --- CONSTANTS ---
@@ -459,6 +473,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} mode - The mode to switch to.
      */
     function setMode(mode) {
+        // --- NEW: Unsaved Changes Check ---
+        if (app.currentMode === 'create' && mode !== 'create' && app.isCreateDeckDirty) {
+            showUnsavedChangesModal(mode);
+            return; // Stop navigation
+        }
+        // --- END NEW ---
+
         // MODIFIED: Show/hide buttons based on deck length
         if (app.currentDeck.cards.length === 0) {
             dom.settingsButton.classList.add('hidden');
@@ -505,6 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (mode === 'create') {
             dom.headerTitle.textContent = "Create a New Deck";
             renderCreateEditor(); // NEW: Render editor when switching to create
+            app.isCreateDeckDirty = false; // Reset dirty flag when entering create mode
         } else {
             dom.headerTitle.textContent = "Totally Not Quizlet";
         }
@@ -642,7 +664,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create deck controls (MODIFIED)
         dom.parseDeckButton.addEventListener('click', parseAndLoadDeck);
-        dom.addCardButton.addEventListener('click', () => createNewCardRow());
+        dom.addCardButton.addEventListener('click', () => {
+            createNewCardRow();
+            app.isCreateDeckDirty = true; // NEW
+        });
         dom.toggleManualButton.addEventListener('click', () => setCreateMode('manual'));
         dom.togglePasteButton.addEventListener('click', () => setCreateMode('paste'));
 
@@ -652,14 +677,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = e.target.closest('.card-editor-row');
                 row.remove();
                 updateCardRowNumbers();
+                app.isCreateDeckDirty = true; // NEW
             }
         });
 
         dom.cardEditorList.addEventListener('input', (e) => {
             if (e.target.tagName === 'TEXTAREA') {
                 autoResizeTextarea(e.target);
+                app.isCreateDeckDirty = true; // NEW
             }
         });
+
+        // NEW: Listen for changes on title and paste area
+        dom.deckTitleInput.addEventListener('input', () => { app.isCreateDeckDirty = true; });
+        dom.deckInputArea.addEventListener('input', () => { app.isCreateDeckDirty = true; });
 
         // NEW: Drag and Drop Listeners
         dom.cardEditorList.addEventListener('dragstart', handleDragStart);
@@ -748,6 +779,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.matchGameArea) {
             dom.matchGameArea.addEventListener('click', handleMatchClick);
         }
+
+        // NEW: Clear All Button Listeners
+        dom.clearCreateButton.addEventListener('click', showClearConfirmModal);
+        dom.clearCancelButton.addEventListener('click', hideClearConfirmModal);
+        dom.clearConfirmButton.addEventListener('click', handleClearAll);
+
+        // NEW: Unsaved Changes Modal Listeners
+        dom.unsavedCancelButton.addEventListener('click', hideUnsavedChangesModal);
+        dom.unsavedDiscardButton.addEventListener('click', () => {
+            hideUnsavedChangesModal();
+            app.isCreateDeckDirty = false; // Discard changes
+            setMode(app.pendingModeChange);
+            app.pendingModeChange = null;
+        });
+        dom.unsavedSaveButton.addEventListener('click', () => {
+            const success = parseAndLoadDeck(); // This now returns true/false
+            if (success) {
+                hideUnsavedChangesModal();
+                // parseAndLoadDeck no longer reloads, so we must manually change mode
+                setMode(app.pendingModeChange); 
+                app.pendingModeChange = null;
+            }
+            // If not successful, modal stays open and parseAndLoadDeck shows its own error toast
+        });
     }
 
     /**
@@ -910,6 +965,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     // --- End Settings Modal Functions ---
+
+    // --- NEW: Clear Confirm Modal Functions ---
+    function showClearConfirmModal() {
+        dom.clearConfirmModalOverlay.classList.add('visible');
+    }
+
+    function hideClearConfirmModal() {
+        dom.clearConfirmModalOverlay.classList.remove('visible');
+    }
+
+    function handleClearAll() {
+        dom.deckTitleInput.value = '';
+        dom.cardEditorList.innerHTML = '';
+        dom.deckInputArea.value = '';
+        renderCreateEditor(); // Re-adds the 3 empty rows
+        app.isCreateDeckDirty = false; // Resets dirty flag
+        hideClearConfirmModal();
+        showToast("Inputs cleared.");
+    }
+    // --- End Clear Confirm Modal Functions ---
+
+    // --- NEW: Unsaved Changes Modal Functions ---
+    function showUnsavedChangesModal(targetMode) {
+        app.pendingModeChange = targetMode;
+        dom.unsavedChangesModalOverlay.classList.add('visible');
+    }
+
+    function hideUnsavedChangesModal() {
+        dom.unsavedChangesModalOverlay.classList.remove('visible');
+    }
+    // --- End Unsaved Changes Modal Functions ---
 
 
     // --- NEW: Progress Update Function ---
@@ -1835,6 +1921,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * MODIFIED: Parses deck from either manual or paste mode.
+     * Does NOT reload the page anymore.
+     * @returns {boolean} - True on success, false on failure.
      */
     function parseAndLoadDeck() {
         const title = dom.deckTitleInput.value.trim() || 'Untitled Deck';
@@ -1880,7 +1968,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newCards.length === 0) {
             // MODIFIED: Don't use alert
             showToast("Could not find any valid cards. Please check your inputs.");
-            return;
+            return false; // NEW: Return failure
         }
 
         if (errorCount > 0) {
@@ -1902,12 +1990,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const jsonString = JSON.stringify(newDeck);
             // MODIFICATION: Use new URL-safe encode function
             const base64String = base64UrlEncode(jsonString);
-            window.location.hash = base64String;
-            location.reload(); 
+            const newHash = `#${base64String}`;
+            
+            // --- MODIFICATION: Do not reload ---
+            history.replaceState(null, '', newHash); // Use replaceState to not clog history
+            
+            app.isCreateDeckDirty = false;
+            loadDeckFromURL(); // Reloads app.currentDeck from new hash
+            updateDocumentTitle();
+            
+            // Update UI elements that init() would have
+            dom.settingsButton.classList.remove('hidden');
+            dom.shareDeckButton.classList.remove('hidden');
+            dom.headerTitle.textContent = app.currentDeck.title;
+            
+            showToast("Deck created successfully!");
+            return true; // NEW: Return success
+            // --- END MODIFICATION ---
+
         } catch (error) {
             console.error("Error creating deck hash:", error);
             // MODIFICATION: Updated error message to be more accurate
             showToast("An error occurred while creating the deck. Please check your text for errors.");
+            return false; // NEW: Return failure
         }
     }
 
@@ -2237,6 +2342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         // Logic is handled in dragover, just update numbers
         updateCardRowNumbers();
+        app.isCreateDeckDirty = true; // NEW: Dragging is a change
     }
 
 
