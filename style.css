@@ -218,6 +218,26 @@ header nav {
     transform: scale(0.98);
 }
 
+/* NEW: Danger button style */
+.danger-action-button {
+    background-color: var(--color-incorrect-light);
+    color: var(--color-incorrect);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--border-radius-button);
+    border: 1px solid var(--color-incorrect);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+}
+.danger-action-button:hover {
+    background-color: var(--color-incorrect);
+    color: white;
+}
+.danger-action-button:active {
+    transform: scale(0.98);
+}
+
+
 /* This targets the "Create a Deck" button on the empty page */
 #empty-deck-view .nav-button {
     background-color: var(--color-primary);
@@ -832,24 +852,32 @@ footer {
 
 /* --- NEW: Modal Styles (Shared) --- */
 #about-modal-overlay,
-#settings-modal-overlay {
+#settings-modal-overlay,
+#clear-confirm-modal-overlay,
+#unsaved-changes-modal-overlay {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 #about-modal-overlay.visible,
-#settings-modal-overlay.visible {
+#settings-modal-overlay.visible,
+#clear-confirm-modal-overlay.visible,
+#unsaved-changes-modal-overlay.visible {
     visibility: visible;
     opacity: 1;
 }
 #about-modal-overlay .modal-backdrop,
-#settings-modal-overlay .modal-backdrop {
+#settings-modal-overlay .modal-backdrop,
+#clear-confirm-modal-overlay .modal-backdrop,
+#unsaved-changes-modal-overlay .modal-backdrop {
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
 #about-modal-content,
-#settings-modal-content {
+#settings-modal-content,
+#clear-confirm-modal-content,
+#unsaved-changes-modal-content {
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-lg);
@@ -859,7 +887,9 @@ footer {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #about-modal-overlay.visible #about-modal-content,
-#settings-modal-overlay.visible #settings-modal-content {
+#settings-modal-overlay.visible #settings-modal-content,
+#clear-confirm-modal-overlay.visible #clear-confirm-modal-content,
+#unsaved-changes-modal-overlay.visible #unsaved-changes-modal-content {
     transform: scale(1);
     opacity: 1;
 }
@@ -964,4 +994,3 @@ body.light-mode .settings-toggle-button.active {
     border-radius: 6px;
     transition: width 0.3s ease;
 }
-
