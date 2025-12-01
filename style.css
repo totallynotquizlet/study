@@ -575,7 +575,7 @@ body.light-mode .tts-button:hover {
 }
 #flashcard-nav button {
     background-color: var(--color-card-bg);
-    color: var(--color-primary);
+    color: var(--color-text-primary); /* MODIFIED: Was --color-primary. Makes arrows white in dark mode. */
     font-weight: 700;
     font-size: 1.25rem;
     border-radius: 50%; /* Circle buttons */
