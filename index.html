@@ -121,9 +121,19 @@
                     </div>
                 </div>
                 <div id="flashcard-nav" class="flex justify-between items-center mt-6">
-                    <button id="prev-card-button" class="py-2 px-5 rounded-lg font-medium">&larr;</button>
+                    <button id="prev-card-button" class="py-2 px-5 rounded-lg font-medium">
+                        <!-- MODIFIED: Robust Arrow Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
                     <div id="card-counter" class="font-medium">1 / 10</div>
-                    <button id="next-card-button" class="py-2 px-5 rounded-lg font-medium">&rarr;</button>
+                    <button id="next-card-button" class="py-2 px-5 rounded-lg font-medium">
+                        <!-- MODIFIED: Robust Arrow Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
                 </div>
             </div>
 
@@ -261,7 +271,7 @@
         </main>
 
         <footer class="text-center p-6 mt-8 border-t">
-            <p class="mb-2">Created by someone</p>
+            <p class="mb-2">Created by Jacob Nedell</p>
             <div class="flex justify-center space-x-4">
                 <button id="about-button" class="footer-link underline cursor-pointer">About</button>
                 
@@ -305,7 +315,7 @@
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="settings-modal-content" class="relative w-full max-w-md p-6 md:p-8 rounded-2xl space-y-6">
             <button id="settings-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
-            <h2 class="text-2xl font-bold mb-4">Study Set Settings</h2>
+            <h2 class="text-2xl font-bold mb-4">Study Set Options</h2>
             
             <div>
                 <label for="setting-deck-title" class="create-label">DECK TITLE</label>
