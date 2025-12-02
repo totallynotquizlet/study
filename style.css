@@ -478,8 +478,10 @@ body.light-mode .create-toggle-button.active {
 }
 .flashcard {
     transform-style: preserve-3d;
-    /* MODIFIED: Kept original flip, added opacity transition for fade */
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-in-out;
+    /* MODIFIED: Kept opacity transition for fade on load, 
+      CHANGED transform duration from 0.7s to 0.4s 
+    */
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-in-out;
     box-shadow: var(--shadow-lg);
     border-radius: var(--border-radius-card); /* More rounded */
     touch-action: none; /* NEW: Prevent scrolling on swipe */
@@ -500,10 +502,45 @@ body.light-mode .create-toggle-button.active {
     /*
       BUG FIX: Removed translateZ(0) from here, moved to .card-back
     */
-    transform: rotateY(180deg);
+    /* EDITED: Changed rotateY to rotateX for vertical flip */
+    transform: rotateX(180deg);
 }
 
-/* REMOVED: All slide animation classes */
+/* --- NEW: Slide Animations for Card Navigation --- */
+/*
+  These animations are added/removed by script.js
+*/
+@keyframes slide-out-left {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slide-in-right {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-out-right {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+@keyframes slide-in-left {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Classes to apply the animations */
+.slide-out-left {
+    animation: slide-out-left 0.2s ease-out forwards;
+}
+.slide-in-right {
+    animation: slide-in-right 0.2s ease-out forwards;
+}
+.slide-out-right {
+    animation: slide-out-right 0.2s ease-out forwards;
+}
+.slide-in-left {
+    animation: slide-in-left 0.2s ease-out forwards;
+}
+
 
 .card-face {
     backface-visibility: hidden;
@@ -541,7 +578,8 @@ body.light-mode .create-toggle-button.active {
       BUG FIX: Combine the rotation with translateZ(0) to maintain
       the rendering stabilization on the back face.
     */
-    transform: rotateY(180deg) translateZ(0);
+    /* EDITED: Changed rotateY to rotateX for vertical flip */
+    transform: rotateX(180deg) translateZ(0);
 }
 
 /* --- NEW: TTS Button --- */
