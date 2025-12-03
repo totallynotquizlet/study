@@ -93,9 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
         learnFeedbackMessage: document.getElementById('learn-feedback-message'), // NEW
         learnContinueButton: document.getElementById('learn-continue-button'), // NEW
         learnCompleteView: document.getElementById('learn-complete-view'),
-        learnRestartButton: document.getElementById('learn-restart-button'),
-        // MODIFIED: Corrected the ID to match the HTML
+        learnRestartButton: document.getElementById('learn-restart-button'), // "Start Again" (complete screen)
         learnSwitchModeButton: document.getElementById('learn-switch-mode-button'), 
+        // NEW CONTROLS
+        learnSkipButton: document.getElementById('learn-skip-button'),
+        learnRestartSessionButton: document.getElementById('learn-restart-session-button'),
 
         // NEW: Type View
         typeView: document.getElementById('type-view'),
@@ -116,8 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
         typeOverrideWrongButton: document.getElementById('type-override-wrong-button'), // MODIFIED
         typeOverrideCorrectButton: document.getElementById('type-override-correct-button'), // NEW
         typeContinueButton: document.getElementById('type-continue-button'), // NEW
-        typeRestartButton: document.getElementById('type-restart-button'),
+        typeRestartButton: document.getElementById('type-restart-button'), // "Start Again" (complete screen)
         typeSwitchModeButton: document.getElementById('type-switch-mode-button'),
+        // NEW CONTROLS
+        typeSkipButton: document.getElementById('type-skip-button'),
+        typeRestartSessionButton: document.getElementById('type-restart-session-button'),
+
 
         // NEW: Match View
         matchView: document.getElementById('match-view'),
@@ -168,6 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
         unsavedSaveButton: document.getElementById('unsaved-save-button'),
         unsavedDiscardButton: document.getElementById('unsaved-discard-button'),
         unsavedCancelButton: document.getElementById('unsaved-cancel-button'),
+
+        // NEW: Keybinds Modal Elements
+        keybindsButton: document.getElementById('keybinds-button'),
+        keybindsModalOverlay: document.getElementById('keybinds-modal-overlay'),
+        keybindsModalClose: document.getElementById('keybinds-modal-close'),
+        keybindsModalBackdrop: document.querySelector('#keybinds-modal-overlay .modal-backdrop'),
     };
 
     // --- CONSTANTS ---
@@ -438,7 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 definition: card.definition,
                 score: 0,
                 lastReviewed: 0,
-                nextReview: 0
+                nextReview: 0,
+                skipCount: 0 // NEW: Initialize skip count
             };
             // Apply stored progress if it exists
             return { ...defaultState, ...(storedProgress || {}) };
@@ -692,6 +705,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.deckTitleInput.addEventListener('input', () => { app.isCreateDeckDirty = true; });
         dom.deckInputArea.addEventListener('input', () => { app.isCreateDeckDirty = true; });
 
+        // NEW: Keyboard navigation for create mode
+        dom.cardEditorList.addEventListener('keydown', handleCreateEditorKeydown);
+
         // NEW: Drag and Drop Listeners
         dom.cardEditorList.addEventListener('dragstart', handleDragStart);
         dom.cardEditorList.addEventListener('dragover', handleDragOver);
@@ -715,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.settingToggleStartWith.addEventListener('click', handleStartWithSettingChange);
         dom.copyDeckButton.addEventListener('click', copyDeckTerms); // NEW
     
-        // NEW: Learn Complete Listeners
+        // NEW: Learn Mode Listeners
         // MODIFIED: Added check for null in case element doesn't exist
         if (dom.learnRestartButton) {
             dom.learnRestartButton.addEventListener('click', startLearnMode);
@@ -723,6 +739,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.learnSwitchModeButton) {
             // MODIFIED: Changed to 'match'
             dom.learnSwitchModeButton.addEventListener('click', () => setMode('match'));
+        }
+        // NEW: Controls listeners
+        if (dom.learnSkipButton) {
+            dom.learnSkipButton.addEventListener('click', handleLearnSkip);
+        }
+        if (dom.learnRestartSessionButton) {
+            dom.learnRestartSessionButton.addEventListener('click', startLearnMode);
         }
         
         // NEW: Continue button listener (MODIFIED for timer)
@@ -756,6 +779,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.typeSwitchModeButton) {
             // MODIFIED: Changed to 'flashcards'
             dom.typeSwitchModeButton.addEventListener('click', () => setMode('flashcards'));
+        }
+        // NEW: Controls listeners
+        if (dom.typeSkipButton) {
+            dom.typeSkipButton.addEventListener('click', handleTypeSkip);
+        }
+        if (dom.typeRestartSessionButton) {
+            dom.typeRestartSessionButton.addEventListener('click', startTypeMode);
         }
         
         // NEW: Continue button listener (MODIFIED for timer)
@@ -803,6 +833,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // If not successful, modal stays open and parseAndLoadDeck shows its own error toast
         });
+
+        // NEW: Keybinds Modal Listeners
+        dom.keybindsButton.addEventListener('click', showKeybindsModal);
+        dom.keybindsModalClose.addEventListener('click', hideKeybindsModal);
+        dom.keybindsModalBackdrop.addEventListener('click', hideKeybindsModal);
     }
 
     /**
@@ -811,11 +846,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleGlobalKeydown(e) {
         // Don't interfere with typing in inputs
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-            return;
+            // Specific create-mode shortcuts are handled by 'handleCreateEditorKeydown'
+            // But we must NOT return here if it's the Type Mode input
+            if (app.currentMode === 'type' && e.target.id === 'type-input-area') {
+                 // Allow 'Enter' key to be handled by the form submit listener
+                 if (e.key === 'Enter') {
+                    return;
+                 }
+            } else if (e.target.tagName === 'TEXTAREA') {
+                // Allow other textareas (like create mode) to be handled by
+                // their own listeners
+                return;
+            } else if (e.target.tagName === 'INPUT') {
+                // Allow other inputs (like titles) to just work
+                return;
+            }
         }
 
         // Handle Spacebar
-        if (e.code === 'Space') {
+        if (e.code === 'Space' || e.key === ' ') {
             e.preventDefault(); // Stop page from scrolling
 
             if (app.currentMode === 'flashcards') {
@@ -842,10 +891,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- NEW: Handle Arrow Keys for Flashcards ---
         if (app.currentMode === 'flashcards') {
-            if (e.code === 'ArrowLeft') {
+            if (e.code === 'ArrowLeft' || e.key === 'ArrowLeft') {
                 e.preventDefault(); // Stop page scrolling
                 showPrevCard();
-            } else if (e.code === 'ArrowRight') {
+            } else if (e.code === 'ArrowRight' || e.key === 'ArrowRight') {
                 e.preventDefault(); // Stop page scrolling
                 showNextCard();
             }
@@ -875,6 +924,92 @@ document.addEventListener('DOMContentLoaded', () => {
             if (optionToClick) {
                 e.preventDefault();
                 optionToClick.click(); // Simulate a click on the button
+            }
+        }
+    }
+
+    /**
+     * NEW: Handles keyboard navigation (Tab, Shift+Enter) within the create editor.
+     */
+    function handleCreateEditorKeydown(e) {
+        const target = e.target;
+        if (target.tagName !== 'TEXTAREA') return;
+
+        const currentRow = target.closest('.card-editor-row');
+        if (!currentRow) return;
+
+        const isTermInput = target.classList.contains('term-input');
+        const isDefInput = target.classList.contains('def-input');
+
+        // --- Handle Shift + Enter ---
+        if (e.shiftKey && e.key === 'Enter') {
+            e.preventDefault();
+            app.isCreateDeckDirty = true;
+            
+            // 1. Create the new row (it gets appended to the end)
+            createNewCardRow();
+            const newRow = dom.cardEditorList.lastChild;
+
+            if (!newRow) return; // Should not happen
+
+            // 2. Move the new row to be after the current row
+            currentRow.after(newRow);
+
+            // 3. Renumber all rows
+            updateCardRowNumbers();
+
+            // 4. Focus the new row's term input
+            const firstInput = newRow.querySelector('.term-input');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }
+        // --- Handle Tab ---
+        else if (e.key === 'Tab' && !e.shiftKey) {
+            if (isTermInput) {
+                // Tabbing from TERM
+                e.preventDefault();
+                const defInput = currentRow.querySelector('.def-input');
+                if (defInput) {
+                    defInput.focus();
+                }
+            } else if (isDefInput) {
+                // Tabbing from DEFINITION
+                const nextRow = currentRow.nextElementSibling;
+                if (nextRow && nextRow.classList.contains('card-editor-row')) {
+                    // Go to next row's term
+                    e.preventDefault();
+                    const nextTermInput = nextRow.querySelector('.term-input');
+                    if (nextTermInput) {
+                        nextTermInput.focus();
+                    }
+                }
+                // If it's the last defInput, let the browser's default
+                // Tab behavior take over (e.g., go to "Add Card" button).
+            }
+        }
+        // --- Handle Shift + Tab ---
+        else if (e.key === 'Tab' && e.shiftKey) {
+             if (isDefInput) {
+                // Shift-Tabbing from DEFINITION
+                e.preventDefault();
+                const termInput = currentRow.querySelector('.term-input');
+                if (termInput) {
+                    termInput.focus();
+                }
+            } else if (isTermInput) {
+                // Shift-Tabbing from TERM
+                const prevRow = currentRow.previousElementSibling;
+                if (prevRow && prevRow.classList.contains('card-editor-row')) {
+                    // Go to previous row's definition
+                    e.preventDefault();
+                    const prevDefInput = prevRow.querySelector('.def-input');
+                    if (prevDefInput) {
+                        prevDefInput.focus();
+                    }
+                }
+                // If it's the first termInput, let the browser's default
+                // Shift+Tab behavior take over.
             }
         }
     }
@@ -1019,6 +1154,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // --- End Unsaved Changes Modal Functions ---
 
+    // --- NEW: Keybinds Modal Functions ---
+    function showKeybindsModal() {
+        dom.keybindsModalOverlay.classList.add('visible');
+    }
+
+    function hideKeybindsModal() {
+        dom.keybindsModalOverlay.classList.remove('visible');
+    }
+    // --- End Keybinds Modal Functions ---
+
 
     // --- NEW: Progress Update Function ---
     /**
@@ -1082,7 +1227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (app.studyDeck.length === 0 || app.isAnimating) return;
         app.isAnimating = true;
 
-        const animationDuration = 200; // 0.2s from CSS (WAS 300)
+        const animationDuration = 100; // 0.2s from CSS (WAS 300)
 
         // 1. Add 'slide-out-right' animation
         dom.flashcardContainer.classList.add('slide-out-right');
@@ -1114,7 +1259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (app.studyDeck.length === 0 || app.isAnimating) return;
         app.isAnimating = true;
 
-        const animationDuration = 200; // 0.2s from CSS (WAS 300)
+        const animationDuration = 100; // 0.2s from CSS (WAS 300)
 
         // 1. Add 'slide-out-left' animation
         dom.flashcardContainer.classList.add('slide-out-left');
@@ -1209,6 +1354,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.learnProgressBarContainer.classList.remove('hidden'); // NEW
         
         app.learnSessionCards = [...app.studyDeck]; // NEW: Create session list
+        // NEW: Reset skip counts for this session
+        app.learnSessionCards.forEach(c => c.skipCount = 0);
+
         shuffleArray(app.learnSessionCards); // NEW: Shuffle session list
         
         updateProgressBar('learn'); // NEW
@@ -1265,6 +1413,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.learnFeedback.classList.remove('correct', 'incorrect');
         dom.learnFeedbackMessage.textContent = ''; // MODIFIED: Clear message
 
+        // NEW: Show Skip button if feedback is hidden
+        dom.learnSkipButton.classList.remove('hidden');
+
         options.forEach(option => {
             const button = document.createElement('button');
             // MODIFIED: Added rounded-xl, kept layout classes
@@ -1274,23 +1425,6 @@ document.addEventListener('DOMContentLoaded', () => {
             button.addEventListener('click', handleLearnAnswer);
             dom.learnOptions.appendChild(button);
         });
-    }
-
-    function getNextLearnCard() {
-        const now = Date.now();
-        // MODIFIED: Use studyDeck
-        // Note: This filters the *studyDeck*, which is a copy. Progress is saved
-        // to the original cards in app.currentDeck.cards, so this works.
-        const dueCards = app.studyDeck.filter(card => card.nextReview <= now);
-
-        if (dueCards.length > 0) {
-            dueCards.sort((a, b) => a.score - b.score);
-            return dueCards[0];
-        }
-
-        // MODIFIED: Use studyDeck
-        const allCardsSorted = [...app.studyDeck].sort((a, b) => a.score - b.score);
-        return allCardsSorted[0];
     }
 
     /**
@@ -1361,6 +1495,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return finalOptions.slice(0, 4);
     }
 
+    /**
+     * NEW: Handle skip logic for Learn Mode
+     */
+    function handleLearnSkip() {
+        const card = app.currentLearnCard;
+        if (!card) return;
+
+        // 1. Increment skip count
+        card.skipCount = (card.skipCount || 0) + 1;
+
+        // 2. Remove from front of session
+        app.learnSessionCards.shift();
+
+        // 3. Logic: if skipped < 2, push to back. If >= 2, effectively remove from round.
+        if (card.skipCount >= 2) {
+            showToast("Skipped twice. Removing from this round.");
+        } else {
+            app.learnSessionCards.push(card);
+            showToast("Skipped. Moved to end.");
+        }
+
+        saveSessionsToLocalStorage();
+        renderLearnQuestion();
+    }
+
     function handleLearnAnswer(event) {
         if (app.correctAnswerTimeout) { // Clear any existing timer
             clearTimeout(app.correctAnswerTimeout);
@@ -1372,6 +1531,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // NEW: Check correct answer based on termFirst
         const correctAnswer = app.currentDeck.settings.termFirst ? app.currentLearnCard.definition : app.currentLearnCard.term;
         const now = Date.now();
+
+        // NEW: Hide Skip button when answer is selected
+        dom.learnSkipButton.classList.add('hidden');
 
         dom.learnOptions.querySelectorAll('button').forEach(btn => {
             btn.disabled = true;
@@ -1426,6 +1588,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.typeProgressBarContainer.classList.remove('hidden'); // NEW
         
         app.typeSessionCards = [...app.studyDeck]; // Create session list
+        // NEW: Reset skip counts
+        app.typeSessionCards.forEach(c => c.skipCount = 0);
+
         shuffleArray(app.typeSessionCards); // Shuffle session list
         
         updateProgressBar('type'); // NEW
@@ -1483,7 +1648,35 @@ document.addEventListener('DOMContentLoaded', () => {
         
         dom.typeOverrideWrongButton.classList.add('hidden'); 
         dom.typeOverrideCorrectButton.classList.add('hidden'); 
+
+        // NEW: Show Skip button
+        dom.typeSkipButton.classList.remove('hidden');
     } 
+
+    /**
+     * NEW: Handle skip logic for Type Mode
+     */
+    function handleTypeSkip() {
+        const card = app.currentTypeCard;
+        if (!card) return;
+
+        // 1. Increment skip count
+        card.skipCount = (card.skipCount || 0) + 1;
+
+        // 2. Remove from front of session
+        app.typeSessionCards.shift();
+
+        // 3. Logic: if skipped < 2, push to back. If >= 2, effectively remove.
+        if (card.skipCount >= 2) {
+             showToast("Skipped twice. Removing from this round.");
+        } else {
+             app.typeSessionCards.push(card);
+             showToast("Skipped. Moved to end.");
+        }
+
+        saveSessionsToLocalStorage();
+        renderTypeQuestion();
+    }
 
     /**
      * Handles the user submitting a typed answer.
@@ -1515,6 +1708,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.typeFeedback.classList.remove('correct', 'incorrect', 'close'); // MODIFIED
         dom.typeOverrideWrongButton.classList.add('hidden'); // MODIFIED
         dom.typeOverrideCorrectButton.classList.add('hidden'); // NEW
+
+        // NEW: Hide Skip button when submitted
+        dom.typeSkipButton.classList.add('hidden');
 
         if (distance === 0) {
             // --- Perfect Match ---
