@@ -850,9 +850,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // But we must NOT return here if it's the Type Mode input
             if (app.currentMode === 'type' && e.target.id === 'type-input-area') {
                  // Allow 'Enter' key to be handled by the form submit listener
-                 if (e.key === 'Enter') {
-                    return;
-                 }
+                 // FIX: Removed the specific check for Enter. We want to return for ALL keys 
+                 // (especially Space) so they are typed into the input instead of triggering 
+                 // global shortcuts or preventDefault.
+                 return;
             } else if (e.target.tagName === 'TEXTAREA') {
                 // Allow other textareas (like create mode) to be handled by
                 // their own listeners
