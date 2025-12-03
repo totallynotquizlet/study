@@ -529,16 +529,16 @@ body.light-mode .create-toggle-button.active {
 
 /* Classes to apply the animations */
 .slide-out-left {
-    animation: slide-out-left 0.2s ease-out forwards;
+    animation: slide-out-left 0.1s ease-out forwards;
 }
 .slide-in-right {
-    animation: slide-in-right 0.2s ease-out forwards;
+    animation: slide-in-right 0.1s ease-out forwards;
 }
 .slide-out-right {
-    animation: slide-out-right 0.2s ease-out forwards;
+    animation: slide-out-right 0.1s ease-out forwards;
 }
 .slide-in-left {
-    animation: slide-in-left 0.2s ease-out forwards;
+    animation: slide-in-left 0.1s ease-out forwards;
 }
 
 
@@ -878,12 +878,14 @@ footer {
     color: var(--color-text-secondary);
     font-size: 0.9rem;
 }
-#about-button {
+#about-button,
+#keybinds-button {
     color: var(--color-text-secondary);
     font-weight: 600;
     transition: color 0.2s ease;
 }
-#about-button:hover {
+#about-button:hover,
+#keybinds-button:hover {
     color: var(--color-primary);
 }
 
@@ -892,7 +894,8 @@ footer {
 #about-modal-overlay,
 #settings-modal-overlay,
 #clear-confirm-modal-overlay,
-#unsaved-changes-modal-overlay {
+#unsaved-changes-modal-overlay,
+#keybinds-modal-overlay {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -900,14 +903,16 @@ footer {
 #about-modal-overlay.visible,
 #settings-modal-overlay.visible,
 #clear-confirm-modal-overlay.visible,
-#unsaved-changes-modal-overlay.visible {
+#unsaved-changes-modal-overlay.visible,
+#keybinds-modal-overlay.visible {
     visibility: visible;
     opacity: 1;
 }
 #about-modal-overlay .modal-backdrop,
 #settings-modal-overlay .modal-backdrop,
 #clear-confirm-modal-overlay .modal-backdrop,
-#unsaved-changes-modal-overlay .modal-backdrop {
+#unsaved-changes-modal-overlay .modal-backdrop,
+#keybinds-modal-overlay .modal-backdrop {
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -915,7 +920,8 @@ footer {
 #about-modal-content,
 #settings-modal-content,
 #clear-confirm-modal-content,
-#unsaved-changes-modal-content {
+#unsaved-changes-modal-content,
+#keybinds-modal-content {
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-lg);
@@ -927,12 +933,14 @@ footer {
 #about-modal-overlay.visible #about-modal-content,
 #settings-modal-overlay.visible #settings-modal-content,
 #clear-confirm-modal-overlay.visible #clear-confirm-modal-content,
-#unsaved-changes-modal-overlay.visible #unsaved-changes-modal-content {
+#unsaved-changes-modal-overlay.visible #unsaved-changes-modal-content,
+#keybinds-modal-overlay.visible #keybinds-modal-content {
     transform: scale(1);
     opacity: 1;
 }
 #about-modal-close,
-#settings-modal-close {
+#settings-modal-close,
+#keybinds-modal-close {
     color: var(--color-text-secondary);
     transition: color 0.2s ease;
     background: none;
@@ -940,7 +948,8 @@ footer {
     line-height: 1;
 }
 #about-modal-close:hover,
-#settings-modal-close:hover {
+#settings-modal-close:hover,
+#keybinds-modal-close:hover {
     color: var(--color-text-primary);
 }
 
@@ -1031,4 +1040,30 @@ body.light-mode .settings-toggle-button.active {
     background-color: var(--color-primary);
     border-radius: 6px;
     transition: width 0.3s ease;
+}
+
+/* --- NEW: Keybinds Modal List Styles --- */
+.keybind-list {
+    list-style: none;
+    padding-left: 0;
+}
+.keybind-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* 12px */
+    margin-bottom: 0.5rem; /* 8px */
+}
+.keybind-list kbd {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-sm);
+}
+.keybind-list span {
+    color: var(--color-text-secondary);
 }
