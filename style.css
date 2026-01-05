@@ -249,20 +249,20 @@ header nav {
 }
 
 
-/* MODIFIED: Reverted Share button to special style */
+/* MODIFIED: Outline style for Share button */
 #share-deck-button {
-    background-color: var(--color-primary-light);
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
     color: var(--color-primary);
     font-weight: 700;
     border-radius: var(--border-radius-button);
     padding: 0.75rem 1.25rem;
     margin-left: 1rem;
-    border-bottom: none;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 #share-deck-button:hover {
     background-color: var(--color-primary);
-    color: var(--color-card-bg);
+    color: white;
 }
 body.light-mode #share-deck-button:hover {
     color: white;
