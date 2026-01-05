@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * NEW: Loads Learn/Type session progress from localStorage.
+     * NEW: Loads Learn/Type/Flashcard session progress from localStorage.
      */
     function loadSessionsFromLocalStorage() {
         try {
@@ -312,6 +312,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     app.typeSessionCards = sessionState.typeSessionCardIds
                         .map(id => app.currentDeck.cards.find(card => card.id === id))
                         .filter(Boolean); // Filter out any nulls
+                }
+                // *** NEW: Restore Flashcard Index ***
+                if (typeof sessionState.flashcardIndex === 'number') {
+                    // Check bounds just in case deck changed slightly
+                    if (sessionState.flashcardIndex >= 0 && sessionState.flashcardIndex < app.studyDeck.length) {
+                        app.currentCardIndex = sessionState.flashcardIndex;
+                    } else {
+                        app.currentCardIndex = 0;
+                    }
                 }
             } else {
                 // Mismatch, clear the old session
@@ -364,14 +373,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * NEW: Saves Learn/Type session progress to localStorage.
+     * NEW: Saves Learn/Type/Flashcard session progress to localStorage.
      */
     function saveSessionsToLocalStorage() {
         try {
             const sessionState = {
                 deckHash: app.currentDeckHash,
                 learnSessionCardIds: app.learnSessionCards.map(card => card.id),
-                typeSessionCardIds: app.typeSessionCards.map(card => card.id)
+                typeSessionCardIds: app.typeSessionCards.map(card => card.id),
+                // *** NEW: Save Flashcard Index ***
+                flashcardIndex: app.currentCardIndex
             };
             localStorage.setItem(app.sessionStorageKey, JSON.stringify(sessionState));
         } catch (error) {
@@ -462,7 +473,27 @@ document.addEventListener('DOMContentLoaded', () => {
             cards: mappedCards,
             settings: rawDeck.settings // Assign settings
         };
+        
+        // *** NEW: Generate studyDeck here so it persists across mode switches ***
+        generateStudyDeck();
+        
+        // Reset index (will be overwritten by loadSessionsFromLocalStorage if valid)
         app.currentCardIndex = 0;
+    }
+
+    /**
+     * *** NEW *** Generates the studyDeck based on current settings.
+     * Moved out of setMode to ensure persistence.
+     */
+    function generateStudyDeck() {
+        if (app.currentDeck.cards.length > 0) {
+            app.studyDeck = [...app.currentDeck.cards];
+            if (app.currentDeck.settings.shuffle) {
+                shuffleArray(app.studyDeck);
+            }
+        } else {
+            app.studyDeck = [];
+        }
     }
 
     /**
@@ -563,30 +594,15 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.toggle('active', btn.dataset.mode === mode);
         });
 
-        // NEW: Create studyDeck *before* mode-specific logic
-        // This ensures studyDeck is always up-to-date with settings
-        if (app.currentDeck.cards.length > 0) {
-            app.studyDeck = [...app.currentDeck.cards];
-            if (app.currentDeck.settings.shuffle) {
-                shuffleArray(app.studyDeck);
-            }
-        } else {
-            app.studyDeck = [];
-        }
-
+        // *** MODIFIED: Removed studyDeck generation from here.
+        // It is now handled in loadDeckFromURL and handleShuffleSettingChange.
+        // This ensures the deck order persists across mode switches.
 
         if (mode === 'flashcards') {
             // studyDeck is already created and shuffled (or not)
             
-            // ***** START PROGRESS RESET FIX *****
-            // Only reset the card index if we are coming from a DIFFERENT mode.
-            // If we are just re-loading the flashcard view (e.g., from modal close),
-            // keep the current index.
-            if (previousMode !== 'flashcards') {
-                app.currentCardIndex = 0;
-            }
-            // *Always* render and reset the flip state, just don't reset the index.
-            // ***** END PROGRESS RESET FIX *****
+            // ***** MODIFIED: Removed the logic that reset app.currentCardIndex = 0.
+            // We now keep the index as-is to remember progress.
             
             renderFlashcardContent();
             dom.flashcardContainer.classList.remove('is-flipped');
@@ -1080,14 +1096,31 @@ document.addEventListener('DOMContentLoaded', () => {
         app.currentDeck.settings.shuffle = !app.currentDeck.settings.shuffle;
         updateSettingsToggle(dom.settingToggleShuffle, app.currentDeck.settings.shuffle, "Shuffle");
         updateURLHash();
-        app.currentCardIndex = 0; // ***** PROGRESS RESET FIX *****
+        
+        // *** MODIFIED: Regenerate deck order and reset index ***
+        generateStudyDeck();
+        app.currentCardIndex = 0; 
+        saveSessionsToLocalStorage(); // Save the new index/state
+        
+        // Force re-render if in flashcards mode
+        if (app.currentMode === 'flashcards') {
+            renderFlashcardContent();
+        }
     }
 
     function handleStartWithSettingChange() {
         app.currentDeck.settings.termFirst = !app.currentDeck.settings.termFirst;
         updateSettingsToggle(dom.settingToggleStartWith, app.currentDeck.settings.termFirst, "Term", "Definition");
         updateURLHash();
-        app.currentCardIndex = 0; // ***** PROGRESS RESET FIX *****
+        
+        // *** MODIFIED: Just save state, don't necessarily reset index or deck order ***
+        // app.currentCardIndex = 0; // Removed reset
+        saveSessionsToLocalStorage();
+        
+        // Force re-render if in flashcards mode
+        if (app.currentMode === 'flashcards') {
+            renderFlashcardContent();
+        }
     }
 
     /** Helper to update a toggle button's appearance */
@@ -1238,6 +1271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 3. Change content
             app.currentCardIndex = (app.currentCardIndex - 1 + app.studyDeck.length) % app.studyDeck.length;
             renderFlashcardContent(); // Update text
+            saveSessionsToLocalStorage(); // *** NEW: Save progress ***
             
             // 4. Reset flip state
             dom.flashcardContainer.classList.remove('is-flipped');
@@ -1270,6 +1304,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 3. Change content
             app.currentCardIndex = (app.currentCardIndex + 1) % app.studyDeck.length;
             renderFlashcardContent(); // Update text
+            saveSessionsToLocalStorage(); // *** NEW: Save progress ***
             
             // 4. Reset flip state
             dom.flashcardContainer.classList.remove('is-flipped');
