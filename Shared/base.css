@@ -1,24 +1,117 @@
+/* base.css
+  The visual foundation for TotallyNotQuizlet.
+  Dependencies: None (Loaded first)
+*/
+
+/* --- 1. CSS Variables (Theming) --- */
 :root {
-  --color-bg: #0a092b; /* ✅ */
-  --color-primary: #4f6dff; /* ✅ */
-  --color-primary-dark: #3a5bf0; /* ✅ */
-  --color-primary-light: #2a3b7d; /* ✅ */
-  --color-text: #ffffff; /* ✅ */
-  --color-muted: #f0f3ff; /* ✅ */
+    /* DEFAULT (DARK MODE) */
+    --color-primary: #4f6dff;      /* Brighter blue for dark mode */
+    --color-primary-light: #2a3b7d;
+    --color-primary-dark: #3a5bf0;
+    
+    --color-secondary: #ffcd1f;    /* Quizlet Yellow */
+    --color-secondary-light: #443c1c;
+    
+    --color-bg: #0a092b;           /* Deep Blue Background */
+    --color-bg-secondary: #1a2342; /* Lighter utility background */
+    --color-card-bg: #232e54;      /* Card / Container Background */
+    
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #f0f3ff;
+    --color-border: #3a497c;
+    
+    /* Feedback Colors */
+    --color-correct: #38c172;
+    --color-correct-light: #1f4f31;
+    --color-incorrect: #e3342f;
+    --color-incorrect-light: #52201f;
+
+    /* Shadows & Radius */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
+
+    --border-radius-card: 24px;
+    --border-radius-button: 12px;
 }
 
-* {
-  box-sizing: border-box;
+/* LIGHT MODE OVERRIDES (Toggled via body class) */
+body.light-mode {
+    --color-primary: #4257b2;
+    --color-primary-light: #f0f3ff;
+    --color-primary-dark: #3a4b99;
+    
+    --color-secondary: #f2b000;
+    --color-secondary-light: #fffbeb;
+    
+    --color-bg: #f6f7fb;
+    --color-bg-secondary: #ffffff;
+    --color-card-bg: #ffffff;
+    
+    --color-text-primary: #303545;
+    --color-text-secondary: #586380;
+    --color-border: #e4e7eb;
+    
+    --color-correct: #28a745;
+    --color-correct-light: #e9f6eb;
+    --color-incorrect: #dc3545;
+    --color-incorrect-light: #fbebed;
+
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(48,53,69,0.1);
+    --shadow-lg: 0 10px 30px rgba(48,53,69,0.15);
 }
 
+/* --- 2. Box Sizing & Spacing Defaults --- */
+
+/* Force scrollbar to prevent layout shift between long/short pages */
+html {
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+/* Inherit box-sizing everywhere for consistent sizing logic */
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+/* Remove default browser margins */
 body {
-  margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: Inter, system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
+/* --- 3. Typography & Appearance --- */
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    
+    /* App-like feel: Prevent accidental text selection */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Explicitly re-enable selection for inputs and content areas */
+input, textarea, [contenteditable="true"] {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+/* --- 4. Structural Layout --- */
+/* The main wrapper for all page content */
+#app-container {
+    max-width: 896px; /* Matches Tailwind max-w-4xl */
+    width: 100%;
+    margin: 0 auto; /* Center the container */
+    padding: 0 1rem; /* Basic gutter for mobile */
 }

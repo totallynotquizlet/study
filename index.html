@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totally Not Quizlet</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Global Infrastructure -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css"> <!-- Shared styles -->
+    
+    <!-- Tailwind (CDN for simplicity, as per original) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Shared Tailwind configuration to match the original design system
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        bg: 'var(--color-bg)',
+                        card: 'var(--color-card-bg)',
+                        text: 'var(--color-text-main)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 transition-colors duration-300 antialiased dark:bg-gray-900 dark:text-gray-100">
+
+    <div id="app-container" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen relative flex flex-col">
+        
+        <!-- Global Theme Toggle 
+             (This should be functional via your shared script.js, 
+             but html is placed here for layout) -->
+        <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300 hover:bg-gray-200 dark:hover:bg-gray-800 text-yellow-500 dark:text-gray-300">
+            <span class="sr-only">Toggle Theme</span>
+            <!-- Sun Icon (Visible in Light Mode) -->
+            <svg id="theme-icon-sun" class="w-6 h-6 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <!-- Moon Icon (Visible in Dark Mode) -->
+            <svg id="theme-icon-moon" class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
+
+        <!-- Logo (Static) -->
+        <img src="favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 left-6 md:top-8 md:left-8 z-50 w-8 h-8 opacity-90">
+
+        <header class="mb-12 pt-16 md:pt-20">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-center mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+                Totally Not Quizlet
+            </h1>
+            
+            <!-- Global Navigation Injection Point -->
+            <div id="global-nav-container">
+                <!-- 
+                   The shared script will inject the <nav> here.
+                   Since we are on index.html (no data), the nav might just show 'Create' active 
+                   or be hidden entirely depending on your design choice.
+                -->
+            </div>
+        </header>
+
+        <!-- Main Content: Landing Page State -->
+        <main class="flex-grow flex flex-col items-center justify-center p-4">
+            
+            <div class="w-full max-w-lg text-center space-y-8 animate-fade-in-up">
+                
+                <!-- Empty State Visual -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8 md:p-12 transform transition-all hover:shadow-2xl">
+                    <div class="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                        Ready to study?
+                    </h2>
+                    
+                    <p class="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+                        You don't have a set currently loaded. Create a new deck or paste your notes to get started instantly.
+                    </p>
+
+                    <!-- Primary Action -->
+                    <a href="create.html" class="inline-flex items-center justify-center w-full px-6 py-4 text-lg font-semibold text-white transition-all bg-blue-600 rounded-xl hover:bg-blue-700 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 shadow-lg shadow-blue-500/30">
+                        <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Create a Deck
+                    </a>
+                </div>
+
+                <div class="text-sm text-gray-400 dark:text-gray-500">
+                    No account required • Data saved locally • 100% Free
+                </div>
+
+            </div>
+
+        </main>
+
+        <footer class="text-center p-6 mt-12 border-t border-gray-200 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mb-3">Created by Jacob Nedell</p>
+            <div class="flex justify-center space-x-6">
+                <!-- About is handled via modal in shared script, or a separate page -->
+                <button id="about-button" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</button>
+                <a href="https://totallynotquizlet.github.io/memorize/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">TNQ Memorize</a>
+                <a href="https://forms.gle/aorM6MFQvaTMf16j9" target="_blank" rel="noopener noreferrer" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Bug Report</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- About Modal (Static Structure) 
+         The shared script should control visibility logic. -->
+    <div id="about-modal-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="about-modal-backdrop"></div>
+        <div class="relative w-full max-w-md bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl transform scale-95 transition-transform duration-300">
+            <button id="about-modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">About This Site</h2>
+            <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                This study site was created to be an alternative to options that bombard you with ads. 
+                Your progress is stored locally in your browser. Enjoy studying!
+            </p>
+        </div>
+    </div>
+
+    <!-- Shared Infrastructure Script 
+         Responsible for:
+         1. Theme toggling logic
+         2. Injecting Nav into #global-nav-container
+         3. Handling the About Modal
+    -->
+    <script src="shared.js"></script>
+
+</body>
+</html>
