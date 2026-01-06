@@ -1,0 +1,24 @@
+:root {
+  --color-bg: #0a092b; /* ✅ */
+  --color-primary: #4f6dff; /* ✅ */
+  --color-primary-dark: #3a5bf0; /* ✅ */
+  --color-primary-light: #2a3b7d; /* ✅ */
+  --color-text: #ffffff; /* ✅ */
+  --color-muted: #f0f3ff; /* ✅ */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}

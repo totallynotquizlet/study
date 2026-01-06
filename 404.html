@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>404 – Totally Not Quizlet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Match main site -->
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app-container" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen flex flex-col items-center justify-center text-center">
+
+    <!-- Title -->
+    <h1 class="text-5xl font-extrabold mb-2">404</h1>
+    <p class="text-muted mb-8">
+      This page is not in the study set.
+    </p>
+
+    <!-- Flashcard -->
+    <div id="lost-card" class="lost-card mb-8">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <p>Term:</p>
+          <strong>Where is this page?</strong>
+        </div>
+        <div class="card-face card-back">
+          <p>Definition:</p>
+          <strong>It doesn’t exist.<br>Sorry.</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex gap-4 flex-wrap justify-center">
+      <a href="/" class="primary-button">
+        Go Home
+      </a>
+      <button id="recover-btn" class="secondary-button">
+        Recover My Set
+      </button>
+    </div>
+
+    <!-- Footer joke -->
+    <p class="text-xs text-muted mt-10">
+      This error was studied for 0 minutes.
+    </p>
+
+  </div>
+
+  <style>
+    /* Flashcard styling using TNQ palette */
+    .lost-card {
+      width: 320px;
+      height: 180px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.6s ease;
+      transform-style: preserve-3d;
+    }
+
+    .lost-card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      background: var(--color-primary-light);
+      border: 2px solid var(--color-primary);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backface-visibility: hidden;
+    }
+
+    .card-face p {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-bottom: 6px;
+    }
+
+    .card-front strong {
+      font-size: 1.3rem;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Button reuse (matches TNQ look) */
+    .primary-button {
+      background: var(--color-primary);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .primary-button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .secondary-button {
+      border: 2px solid var(--color-primary);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .secondary-button:hover {
+      background: var(--color-primary-light);
+    }
+  </style>
+
+  <script>
+    const card = document.getElementById("lost-card");
+    card.addEventListener("click", () => {
+      card.classList.toggle("flipped");
+    });
+
+    document.getElementById("recover-btn").addEventListener("click", () => {
+      if (location.hash) {
+        location.href = "/flashcards/" + location.hash;
+      } else {
+        location.href = "/";
+      }
+    });
+  </script>
+</body>
+</html>
