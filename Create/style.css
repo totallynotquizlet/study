@@ -1,0 +1,184 @@
+/* --- Create Page Specific Styles --- */
+
+#deck-title-input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    padding: 0.5rem 0.25rem;
+    transition: border-color 0.2s ease;
+}
+
+#deck-title-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.create-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+    padding: 0 0.25rem;
+    text-transform: uppercase;
+}
+
+.create-toggle-button {
+    background-color: var(--color-card-bg);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-button);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.create-toggle-button:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+.create-toggle-button.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    font-weight: 700;
+}
+
+body.light-mode .create-toggle-button.active {
+    color: var(--color-primary);
+}
+
+/* --- Card Editor List --- */
+.card-editor-row {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-button);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+/* Style for when dragging */
+.card-editor-row.dragging {
+    opacity: 0.5;
+    box-shadow: var(--shadow-lg);
+    background-color: var(--color-bg-secondary);
+}
+
+.drag-handle {
+    color: var(--color-text-secondary);
+    cursor: grab;
+    padding-top: 1.25rem; /* Align with center of textarea */
+    flex-shrink: 0;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.drag-handle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.card-row-number {
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    padding-top: 1.25rem; /* Align with center of textarea */
+    flex-shrink: 0;
+}
+
+.card-input-wrapper {
+    flex-grow: 1;
+}
+
+.card-input-wrapper textarea {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: 0.5rem 0.25rem;
+    font-weight: 500;
+    resize: none; /* Disable manual resize */
+    overflow: hidden; /* Hide scrollbar */
+    min-height: 2.5rem; /* Start height */
+    line-height: 1.5;
+    transition: border-color 0.2s ease;
+}
+
+.card-input-wrapper textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.delete-card-button {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    padding-top: 1.1rem;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
+
+.delete-card-button:hover {
+    color: var(--color-incorrect);
+}
+
+.delete-card-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+#add-card-button {
+    width: 100%;
+    border: 2px dashed var(--color-border);
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    padding: 1.25rem;
+    border-radius: var(--border-radius-button);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+#add-card-button:hover {
+    background-color: var(--color-card-bg);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* --- Import/Paste Section --- */
+#create-example-guide {
+    background-color: var(--color-bg);
+    border: 1px dashed var(--color-border);
+    color: var(--color-text-secondary);
+    border-radius: var(--border-radius-button);
+}
+
+#deck-input-area {
+    font-family: monospace;
+    font-size: 0.95rem;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius-button);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+    color: var(--color-text-primary);
+}
+
+#deck-input-area:focus {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg);
+}
+
+#parse-deck-button {
+    border-radius: var(--border-radius-button);
+}

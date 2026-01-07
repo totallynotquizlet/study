@@ -1,229 +1,464 @@
-/* ui.css
-   Reusable UI components and utility classes.
-   Dependencies: base.css
-*/
-
-/* --- 1. Typography Helpers --- */
-
-.text-muted {
-    color: var(--color-text-secondary);
-}
-
-.text-title {
+/* --- Header & Navigation --- */
+header h1 {
     color: var(--color-text-primary);
     font-weight: 900;
     font-size: 2.5rem;
-    line-height: 1.2;
+    transition: color 0.3s ease;
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
 }
 
-.text-label {
-    font-size: 0.75rem;
-    font-weight: 700;
+#header-logo {
+    /* Logo styling without button traits */
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Navigation Tabs */
+header nav {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    border-bottom: 2px solid var(--color-border);
+    position: relative;
+    top: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.nav-button {
+    background: transparent;
     color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0;
+    border: none;
+    border-bottom: 4px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none; /* In case anchor tags are used */
+    display: inline-block;
 }
 
-/* --- 2. Buttons --- */
+.nav-button:hover {
+    color: var(--color-text-primary);
+}
 
-/* Base Button Style */
-.btn {
-    display: inline-flex;
+.nav-button.active {
+    color: var(--color-primary);
+    background-color: transparent;
+    border-bottom-color: var(--color-primary);
+}
+
+/* --- Theme & Settings Toggles --- */
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem 1.5rem;
+}
+
+#theme-toggle-button,
+#settings-button {
+    color: var(--color-text-secondary);
+}
+
+#theme-toggle-button:hover,
+#settings-button:hover {
+    color: var(--color-secondary);
+    background-color: var(--color-card-bg);
+}
+
+/* Icon visibility logic */
+body.light-mode #theme-icon-sun { display: none; }
+body.light-mode #theme-icon-moon { display: block; }
+body:not(.light-mode) #theme-icon-sun { display: block; }
+body:not(.light-mode) #theme-icon-moon { display: none; }
+
+/* --- Action Buttons --- */
+.main-action-button {
+    background-color: var(--color-primary);
+    color: white;
     font-size: 1rem;
     font-weight: 700;
     border-radius: var(--border-radius-button);
+    box-shadow: var(--shadow-sm);
     border: none;
+    padding: 0.75rem 1.5rem;
     cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    line-height: 1;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
-.btn:active {
+.main-action-button:hover {
+    background-color: var(--color-primary-dark);
+}
+.main-action-button:active {
     transform: scale(0.98);
 }
 
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Primary Action (Solid Color) */
-.btn-primary {
-    background-color: var(--color-primary);
-    color: white;
-    box-shadow: var(--shadow-sm);
-}
-
-.btn-primary:hover {
-    background-color: var(--color-primary-dark);
-}
-
-/* Secondary Action (Card Background with Border) */
-.btn-secondary {
+.secondary-action-button {
     background-color: var(--color-card-bg);
     color: var(--color-text-secondary);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--border-radius-button);
     border: 2px solid var(--color-border);
     box-shadow: var(--shadow-sm);
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
-
-.btn-secondary:hover {
+.secondary-action-button:hover {
     background-color: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border-color: var(--color-text-secondary);
 }
-
-/* Danger Action (Red styles) */
-.btn-danger {
-    background-color: var(--color-incorrect-light);
-    color: var(--color-incorrect);
-    border: 1px solid var(--color-incorrect);
-    box-shadow: var(--shadow-sm);
+.secondary-action-button:active {
+    transform: scale(0.98);
 }
 
-.btn-danger:hover {
+.danger-action-button {
+    background-color: var(--color-incorrect-light);
+    color: var(--color-incorrect);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--border-radius-button);
+    border: 1px solid var(--color-incorrect);
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.danger-action-button:hover {
     background-color: var(--color-incorrect);
     color: white;
 }
+.danger-action-button:active {
+    transform: scale(0.98);
+}
 
-/* Ghost / Nav Button (Transparent until active/hover) */
-.btn-ghost {
+#share-deck-button {
     background-color: transparent;
-    color: var(--color-text-secondary);
-    border-radius: 0;
-    border-bottom: 4px solid transparent;
-    padding: 1rem 1.5rem;
-}
-
-.btn-ghost:hover {
-    color: var(--color-text-primary);
-}
-
-.btn-ghost.active {
+    border: 2px solid var(--color-primary);
     color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
+    font-weight: 700;
+    border-radius: var(--border-radius-button);
+    padding: 0.75rem 1.25rem;
+    margin-left: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+#share-deck-button:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+body.light-mode #share-deck-button:hover {
+    color: white;
 }
 
-/* Icon Button (Round) */
-.btn-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    padding: 0;
-    background-color: var(--color-card-bg);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+.continue-button {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: var(--border-radius-button);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.continue-button:hover {
+    background-color: var(--color-primary-dark);
 }
 
-.btn-icon:hover {
-    background-color: var(--color-primary-light);
-    border-color: var(--color-primary);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-/* --- 3. Cards & Containers --- */
-
-/* Standard Card (Used for views, question boxes) */
-.card {
+/* --- Shared Panels/Containers --- */
+/* This class replicates the shared style block from the original CSS 
+   (formerly applied to #empty-deck-view, #learn-question-box, etc.) */
+.panel-container {
     background-color: var(--color-bg-secondary);
     box-shadow: var(--shadow-md);
     border-radius: var(--border-radius-card);
     border: 1px solid var(--color-border);
-    padding: 2rem;
-    overflow: hidden;
 }
 
-/* Flat Card (Used for list items, settings rows) */
-.card-flat {
+/* --- Toast Notification --- */
+#toast-notification {
+    background-color: var(--color-card-bg);
+    color: var(--color-text-primary);
+    font-weight: 600;
+    border-radius: var(--border-radius-button);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    padding: 1rem 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    pointer-events: none;
+}
+#toast-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Modals (Shared Structure) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: relative;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    color: var(--color-text-primary);
+    border-radius: var(--border-radius-card);
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-overlay.visible .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    line-height: 1;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.modal-close-button:hover {
+    color: var(--color-text-primary);
+}
+
+/* Settings & Keybinds Specifics */
+.settings-toggle-button {
+    background-color: var(--color-card-bg);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-button);
+    transition: all 0.2s ease;
+    text-align: center;
+    cursor: pointer;
+}
+.settings-toggle-button:hover {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+.settings-toggle-button.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    font-weight: 700;
+}
+body.light-mode .settings-toggle-button.active {
+    color: var(--color-primary);
+}
+
+.keybind-list {
+    list-style: none;
+    padding-left: 0;
+}
+.keybind-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+.keybind-list kbd {
     background-color: var(--color-card-bg);
     border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-button);
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
     box-shadow: var(--shadow-sm);
-    padding: 1rem;
+}
+.keybind-list span {
+    color: var(--color-text-secondary);
 }
 
-/* --- 4. Inputs --- */
-
-/* Base Input (Underline style) */
-.input {
+/* --- Shared Inputs --- */
+.transparent-input {
     background-color: transparent;
     border: none;
     border-bottom: 2px solid var(--color-border);
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.25rem;
+    font-weight: 700;
     color: var(--color-text-primary);
     padding: 0.5rem 0.25rem;
     transition: border-color 0.2s ease;
     width: 100%;
 }
-
-.input:focus {
+.transparent-input:focus {
     outline: none;
     border-color: var(--color-primary);
 }
 
-/* Boxed Input (Used for large type areas) */
-.input-box {
-    background-color: var(--color-card-bg);
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius-button);
-    padding: 1rem;
-    color: var(--color-text-primary);
+/* Range Slider */
+input[type=range] {
+    -webkit-appearance: none;
     width: 100%;
-    transition: all 0.2s ease;
+    background: transparent;
 }
-
-.input-box:focus {
+input[type=range]:focus {
     outline: none;
-    border-color: var(--color-primary);
-    background-color: var(--color-bg-secondary);
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+    margin-top: -8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.1s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: var(--color-card-bg);
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+}
+input[type=range]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.1s ease;
+}
+input[type=range]::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: var(--color-card-bg);
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
 }
 
-/* --- 5. Layout Helpers --- */
-
-.flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* --- Progress Bar --- */
+.progress-bar-container {
+    width: 100%;
+    height: 12px;
+    background-color: var(--color-card-bg);
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: 6px;
+    transition: width 0.3s ease;
 }
 
-.flex-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.gap-sm { gap: 0.5rem; }
-.gap-md { gap: 1rem; }
-.gap-lg { gap: 2rem; }
-
-/* Visually hidden but accessible (if needed) or general display toggle */
-.hidden {
-    display: none !important;
-}
-
-/* --- 6. Feedback Elements --- */
-
-.feedback-box {
-    padding: 1rem;
-    border-radius: var(--border-radius-button);
+/* --- Footer --- */
+footer {
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    padding: 2rem 0;
+    margin-top: 4rem;
     text-align: center;
-    font-weight: 700;
-    margin-top: 1rem;
+}
+#about-button,
+#keybinds-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    transition: color 0.2s ease;
+    padding: 0 0.5rem;
+}
+#about-button:hover,
+#keybinds-button:hover {
+    color: var(--color-primary);
 }
 
-.feedback-correct {
-    background-color: var(--color-correct-light);
-    color: var(--color-correct);
+/* --- Animation Utilities --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-
-.feedback-incorrect {
-    background-color: var(--color-incorrect-light);
-    color: var(--color-incorrect);
+.fade-in {
+    animation: fadeIn 0.3s ease;
 }

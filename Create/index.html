@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totally Not Quizlet - Create</title>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../Shared/base.css">
+    <link rel="stylesheet" href="../Shared/ui.css">
+    
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../favicon.png">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <div id="app-container" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen relative flex flex-col">
+        
+        <!-- Theme & Settings Buttons (Managed by Shared/nav.js) -->
+        <button id="settings-button" class="absolute top-6 left-6 md:top-8 md:left-10 z-50 p-2 rounded-full transition-all duration-300 hidden">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        </button>
+
+        <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300">
+            <span id="theme-icon-sun" class="text-3xl" style="line-height: 1;">☼</span>
+            <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <!-- Header Logo -->
+        <a href="../" class="absolute top-6 md:top-8 z-50 left-1/2 transform -translate-x-1/2">
+            <img src="../favicon.png" alt="Site Logo" id="header-logo">
+        </a>
+        
+        <!-- Header & Nav -->
+        <header class="mb-6 pt-12">
+            <h1 id="header-title" class="text-3xl text-center mb-6">Totally Not Quizlet</h1>
+            <nav class="flex justify-center p-2 space-x-1 md:space-x-2">
+                <!-- Navigation links will be injected here by Shared/nav.js -->
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content" class="flex-grow">
+            <!-- Create View -->
+            <div id="create-view" class="app-view block">
+                <div id="create-form-container" class="space-y-6">
+                    <div>
+                        <input type="text" id="deck-title-input" class="w-full" placeholder="Enter a title, like &quot;Biology - Chapter 4&quot;">
+                        <label for="deck-title-input" class="create-label">TITLE</label>
+                    </div>
+                    <!-- Wrapped toggles and new button in a flex container -->
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-2">
+                            <button id="toggle-manual-button" class="create-toggle-button active">
+                                Manual Entry
+                            </button>
+                            <button id="toggle-paste-button" class="create-toggle-button">
+                                Import from Text
+                            </button>
+                        </div>
+                        <!-- Clear All Button -->
+                        <button id="clear-create-button" class="danger-action-button text-sm px-4 py-2">
+                            Clear All
+                        </button>
+                    </div>
+                    
+                    <!-- Manual Input Section -->
+                    <div id="manual-input-section" class="space-y-4">
+                        <div id="card-editor-list" class="space-y-3">
+                            <!-- Card rows will be injected here by script.js -->
+                        </div>
+                        <button id="add-card-button" class="w-full">
+                            + ADD CARD
+                        </button>
+                    </div>
+                    
+                    <!-- Paste/Import Section -->
+                    <div id="paste-input-section" class="hidden space-y-4">
+                        <p id="create-example-guide" class="text-sm p-3 rounded-md">
+                            Paste your terms and definitions here, separated by a comma. Put each new pair on a new line.
+                            <br>
+                            <strong>Example Format:</strong><br>
+                            Capital of France, Paris<br>
+                            2 + 2, 4
+                        </p>
+                        <textarea id="deck-input-area" class="w-full h-64 p-3 rounded-lg focus:outline-none" placeholder="Enter deck data here..."></textarea>
+                    </div>
+                    
+                    <button id="parse-deck-button" class="main-action-button mt-4 w-full font-medium py-3 px-6 rounded-lg">
+                        Create Deck
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center p-6 mt-8 border-t">
+            <p class="mb-2">Created by Jacob Nedell</p>
+            <div class="flex justify-center space-x-4">
+                <button id="about-button" class="footer-link underline cursor-pointer">About</button>
+                <button id="keybinds-button" class="footer-link underline cursor-pointer">Keybinds</button>
+
+                <a href="https://totallynotquizlet.github.io/memorize/" class="footer-link underline">
+                    tnq memorize
+                </a>
+                
+                <a href="https://forms.gle/aorM6MFQvaTMf16j9" class="footer-link underline" target="_blank" rel="noopener noreferrer">
+                    Bug Report
+                </a>
+                
+                <a href="https://forms.gle/Z1xESserXb1NVVDv6" class="footer-link underline" target="_blank" rel="noopener noreferrer">
+                    Feature Request
+                </a>
+            </div>
+        </footer>
+        
+        <!-- Shared Toast Container -->
+        <div id="toast-notification" class="fixed bottom-6 right-6 py-3 px-5 rounded-lg shadow-xl opacity-0 translate-y-4 transition-all duration-300 z-50"></div>
+
+    </div>
+
+    <!-- Modals (Required for ui/nav interactions) -->
+    
+    <!-- About Modal -->
+    <div id="about-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="about-modal-content" class="modal-content">
+            <button id="about-modal-close" class="modal-close-button">&times;</button>
+            <h2 class="text-2xl font-bold mb-4">About This Site</h2>
+            <p>
+                This study site was created to be an alternative to other options that bombard you 
+                with ads or make you pay to use them. The site includes flashcards, multiple 
+                choice questions, matching questions, and text questions with AI to intelligently help you memorize for school! With the 
+                base64 URLs, you can share study sets you've created without having to create an 
+                account and risk getting your personal information sold. Simply press the "Share 
+                Deck" button in the top menu to instantly copy the link to your clipboard for fast 
+                sharing. Your progress is stored locally in your browser and will not be deleted 
+                unless you clear your history or site data. This site is still under works 
+                and will contine to bring new features over time. Enjoy studying!
+            </p>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="settings-modal-content" class="modal-content space-y-6">
+            <button id="settings-modal-close" class="modal-close-button">&times;</button>
+            <h2 class="text-2xl font-bold mb-4">Study Set Options</h2>
+            
+            <div>
+                <label for="setting-deck-title" class="create-label text-xs font-bold text-[var(--color-text-secondary)] uppercase px-1">DECK TITLE</label>
+                <input type="text" id="setting-deck-title" class="transparent-input w-full" placeholder="Enter a title...">
+            </div>
+            <div>
+                <label class="create-label text-xs font-bold text-[var(--color-text-secondary)] uppercase px-1">SHUFFLE CARDS</label>
+                <button id="setting-toggle-shuffle" class="settings-toggle-button w-full mt-1">
+                    Shuffle
+                </button>
+            </div>
+            <div>
+                <label class="create-label text-xs font-bold text-[var(--color-text-secondary)] uppercase px-1">START WITH</label>
+                <button id="setting-toggle-start-with" class="settings-toggle-button w-full mt-1">
+                    Term
+                </button>
+            </div>
+
+            <div class="pt-4 border-t border-dashed border-[var(--color-border)]">
+                <label class="create-label text-xs font-bold text-[var(--color-text-secondary)] uppercase px-1">EXPORT</label>
+                <button id="copy-deck-button" class="secondary-action-button w-full mt-1">
+                    Copy all terms and definitions
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keybinds Modal -->
+    <div id="keybinds-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="keybinds-modal-content" class="modal-content">
+            <button id="keybinds-modal-close" class="modal-close-button">&times;</button>
+            <h2 class="text-2xl font-bold mb-6">Keyboard Shortcuts</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Create Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>Tab</kbd><span>Move between Term and Definition fields</span></li>
+                        <li><kbd>Shift</kbd> + <kbd>Tab</kbd><span>Move to previous field</span></li>
+                        <li><kbd>Shift</kbd> + <kbd>Enter</kbd><span>Add a new, empty card below</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Flashcards Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>Space</kbd><span>Flip the current card</span></li>
+                        <li><kbd>→</kbd><span>Show the next card</span></li>
+                        <li><kbd>←</kbd><span>Show the previous card</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Learn Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>1</kbd> / <kbd>A</kbd> ... <kbd>4</kbd> / <kbd>D</kbd><span>Select an answer option</span></li>
+                        <li><kbd>Space</kbd><span>Continue after viewing feedback</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Type Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>Enter</kbd><span>Submit your answer</span></li>
+                        <li><kbd>Space</kbd><span>Continue after viewing feedback</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Confirmation Modal (Specific to Create) -->
+    <div id="clear-confirm-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="clear-confirm-modal-content" class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Are you sure?</h2>
+            <p class="mb-6">
+                This will clear all terms, definitions, and the title from the create page. This action cannot be undone.
+            </p>
+            <div class="flex justify-end space-x-3">
+                <button id="clear-cancel-button" class="secondary-action-button font-medium py-2 px-5 rounded-lg">
+                    Cancel
+                </button>
+                <button id="clear-confirm-button" class="danger-action-button font-medium py-2 px-5 rounded-lg">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unsaved Changes Modal -->
+    <div id="unsaved-changes-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="unsaved-changes-modal-content" class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Unsaved Changes</h2>
+            <p class="mb-6">
+                You have unsaved changes. Do you want to save them before continuing?
+            </p>
+            <div class="flex flex-col space-y-3">
+                <button id="unsaved-save-button" class="main-action-button font-medium py-3 px-5 rounded-lg">
+                    Save & Continue
+                </button>
+                <button id="unsaved-discard-button" class="danger-action-button font-medium py-3 px-5 rounded-lg">
+                    Continue without Saving
+                </button>
+                <button id="unsaved-cancel-button" class="secondary-action-button font-medium py-3 px-5 rounded-lg">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../Shared/storage.js"></script>
+    <script src="../Shared/nav.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

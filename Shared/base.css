@@ -1,33 +1,30 @@
-/* base.css
-  The visual foundation for TotallyNotQuizlet.
-  Dependencies: None (Loaded first)
-*/
+/* --- CSS Variables (Color Palette) --- */
 
-/* --- 1. CSS Variables (Theming) --- */
+/* Force scrollbar to prevent layout shift */
+html {
+    overflow-y: scroll;
+}
+
+/* DEFAULT (DARK MODE) */
 :root {
-    /* DEFAULT (DARK MODE) */
-    --color-primary: #4f6dff;      /* Brighter blue for dark mode */
+    --color-primary: #4f6dff; /* Brighter blue for dark mode */
     --color-primary-light: #2a3b7d;
     --color-primary-dark: #3a5bf0;
+    --color-secondary: #ffcd1f; /* Quizlet Yellow */
+    --color-secondary-light: #443c1c; /* NEW: for 'close' bg */
     
-    --color-secondary: #ffcd1f;    /* Quizlet Yellow */
-    --color-secondary-light: #443c1c;
-    
-    --color-bg: #0a092b;           /* Deep Blue Background */
-    --color-bg-secondary: #1a2342; /* Lighter utility background */
-    --color-card-bg: #232e54;      /* Card / Container Background */
-    
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #f0f3ff;
+    --color-bg: #0a092b; /* Dark Blue Background */
+    --color-bg-secondary: #1a2342; /* Slightly lighter bg */
+    --color-card-bg: #232e54; /* Card Background */
+    --color-text-primary: #ffffff; /* White text */
+    --color-text-secondary: #f0f3ff; /* Light text */
     --color-border: #3a497c;
     
-    /* Feedback Colors */
     --color-correct: #38c172;
     --color-correct-light: #1f4f31;
     --color-incorrect: #e3342f;
     --color-incorrect-light: #52201f;
 
-    /* Shadows & Radius */
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.2);
     --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
@@ -36,19 +33,17 @@
     --border-radius-button: 12px;
 }
 
-/* LIGHT MODE OVERRIDES (Toggled via body class) */
+/* LIGHT MODE OVERRIDES */
 body.light-mode {
     --color-primary: #4257b2;
     --color-primary-light: #f0f3ff;
     --color-primary-dark: #3a4b99;
-    
     --color-secondary: #f2b000;
     --color-secondary-light: #fffbeb;
     
     --color-bg: #f6f7fb;
     --color-bg-secondary: #ffffff;
     --color-card-bg: #ffffff;
-    
     --color-text-primary: #303545;
     --color-text-secondary: #586380;
     --color-border: #e4e7eb;
@@ -63,43 +58,26 @@ body.light-mode {
     --shadow-lg: 0 10px 30px rgba(48,53,69,0.15);
 }
 
-/* --- 2. Box Sizing & Spacing Defaults --- */
-
-/* Force scrollbar to prevent layout shift between long/short pages */
-html {
-    overflow-y: scroll;
-    box-sizing: border-box;
-}
-
-/* Inherit box-sizing everywhere for consistent sizing logic */
-*, *:before, *:after {
-    box-sizing: inherit;
-}
-
-/* Remove default browser margins */
-body {
-    margin: 0;
-    padding: 0;
-}
-
-/* --- 3. Typography & Appearance --- */
+/* --- Base Styles --- */
 body {
     background-color: var(--color-bg);
     color: var(--color-text-primary);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s ease, color 0.3s ease;
     
-    /* App-like feel: Prevent accidental text selection */
+    /* Allow text selection in inputs, disable elsewhere by default */
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    margin: 0;
+    padding: 0;
 }
 
-/* Explicitly re-enable selection for inputs and content areas */
+/* Allow selection on text inputs and editable content */
 input, textarea, [contenteditable="true"] {
     user-select: text;
     -webkit-user-select: text;
@@ -107,11 +85,16 @@ input, textarea, [contenteditable="true"] {
     -ms-user-select: text;
 }
 
-/* --- 4. Structural Layout --- */
-/* The main wrapper for all page content */
+/* Main Application Container */
 #app-container {
-    max-width: 896px; /* Matches Tailwind max-w-4xl */
+    max-width: 896px; /* Matches max-w-4xl */
     width: 100%;
-    margin: 0 auto; /* Center the container */
-    padding: 0 1rem; /* Basic gutter for mobile */
+    margin: 0 auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+/* Universal box sizing */
+*, *::before, *::after {
+    box-sizing: border-box;
 }
