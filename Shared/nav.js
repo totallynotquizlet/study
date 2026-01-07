@@ -1,4 +1,4 @@
-fetch("/view/shared/nav.html")
+fetch("./nav.html")
   .then(r => r.text())
   .then(html => {
     document.body.insertAdjacentHTML("afterbegin", html);
