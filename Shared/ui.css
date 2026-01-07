@@ -18,7 +18,7 @@ header h1 {
     margin: 0 auto;
 }
 
-/* Navigation Tabs */
+/* Navigation Tabs - CORRECTED TO MATCH OLD STYLE.CSS */
 header nav {
     background: transparent;
     box-shadow: none;
@@ -26,25 +26,26 @@ header nav {
     border-bottom: 2px solid var(--color-border);
     position: relative;
     top: 2px;
+    /* Allow buttons to wrap */
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 2rem;
+    /* REMOVED: margin-bottom: 2rem; */
 }
 
 .nav-button {
     background: transparent;
     color: var(--color-text-secondary);
-    font-weight: 700;
+    font-weight: 700; /* Bolder font */
     font-size: 1.1rem;
     padding: 1rem 1.5rem;
     border-radius: 0;
-    border: none;
     border-bottom: 4px solid transparent;
     transition: all 0.2s ease;
-    cursor: pointer;
-    text-decoration: none; /* In case anchor tags are used */
-    display: inline-block;
+    /* REMOVED: border: none; */
+    /* REMOVED: cursor: pointer; */
+    /* REMOVED: text-decoration: none; */
+    /* REMOVED: display: inline-block; */
 }
 
 .nav-button:hover {
