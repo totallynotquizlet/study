@@ -18,7 +18,7 @@ header h1 {
     margin: 0 auto;
 }
 
-/* Navigation Tabs - CORRECTED TO MATCH OLD STYLE.CSS */
+/* Navigation Tabs */
 header nav {
     background: transparent;
     box-shadow: none;
@@ -42,10 +42,6 @@ header nav {
     border-radius: 0;
     border-bottom: 4px solid transparent;
     transition: all 0.2s ease;
-    /* REMOVED: border: none; */
-    /* REMOVED: cursor: pointer; */
-    /* REMOVED: text-decoration: none; */
-    /* REMOVED: display: inline-block; */
 }
 
 .nav-button:hover {

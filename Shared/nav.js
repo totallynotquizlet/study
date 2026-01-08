@@ -77,3 +77,8 @@ fetch("/study/Shared/nav.html")
     if (!nav) return;
     nav.innerHTML = html;
   });
+
+  // Auto-apply (active tab logic)
+  if (link.href === location.href) {
+  link.classList.add("active");
+}
