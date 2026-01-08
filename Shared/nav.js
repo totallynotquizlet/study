@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const links = document.querySelectorAll("nav a");
     links.forEach(link => {
       if (link.pathname === location.pathname) {
-        link.classList.add("active");
+        link.classList.add("Active");
       }
     });
   }
@@ -61,12 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   function openModal(overlayId) {
     const overlay = document.getElementById(overlayId);
-    if (overlay) overlay.classList.add("active");
+    if (overlay) overlay.classList.add("visible");
   }
 
   function closeModal(overlayId) {
     const overlay = document.getElementById(overlayId);
-    if (overlay) overlay.classList.remove("active");
+    if (overlay) overlay.classList.remove("visible");
   }
 
   function wireModal(buttonId, overlayId, closeId) {
