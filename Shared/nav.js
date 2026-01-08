@@ -1,84 +1,100 @@
-fetch("/study/Shared/nav.html")
-  .then(r => r.text())
-  .then(html => {
-    const nav = document.querySelector("nav");
-    if (!nav) return;
-    nav.innerHTML = html;
-  });
+// ============================================================================
+// Shared Navigation + UI Logic
+// ============================================================================
 
-// ============================================================================
-// Theme Management
-// ============================================================================
-(function() {
-  const THEME_KEY = 'theme';
-  const LIGHT_MODE_CLASS = 'light-mode';
-  
-  /**
-   * Apply theme by adding/removing the light-mode class
-   */
+document.addEventListener("DOMContentLoaded", () => {
+
+  // --------------------------------------------------------------------------
+  // Inject Navigation
+  // --------------------------------------------------------------------------
+  fetch("/study/Shared/nav.html")
+    .then(r => r.text())
+    .then(html => {
+      const nav = document.querySelector("nav");
+      if (!nav) return;
+      nav.innerHTML = html;
+      applyActiveNav();
+    });
+
+  // --------------------------------------------------------------------------
+  // Active Nav Highlighting
+  // --------------------------------------------------------------------------
+  function applyActiveNav() {
+    const links = document.querySelectorAll("nav a");
+    links.forEach(link => {
+      if (link.pathname === location.pathname) {
+        link.classList.add("active");
+      }
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Theme Management
+  // --------------------------------------------------------------------------
+  const THEME_KEY = "theme";
+  const LIGHT_MODE_CLASS = "light-mode";
+
   function applyTheme(theme) {
-    if (theme === 'light') {
-      document.body.classList.add(LIGHT_MODE_CLASS);
-    } else {
-      document.body.classList.remove(LIGHT_MODE_CLASS);
-    }
+    document.body.classList.toggle(LIGHT_MODE_CLASS, theme === "light");
   }
-  
-  /**
-   * Get saved theme from localStorage, default to 'dark'
-   */
+
   function getSavedTheme() {
-    return localStorage.getItem(THEME_KEY) || 'dark';
+    return localStorage.getItem(THEME_KEY) || "dark";
   }
-  
-  /**
-   * Save theme to localStorage
-   */
-  function saveTheme(theme) {
-    localStorage.setItem(THEME_KEY, theme);
-  }
-  
-  /**
-   * Get current theme based on body class
-   */
-  function getCurrentTheme() {
-    return document.body.classList.contains(LIGHT_MODE_CLASS) ? 'light' : 'dark';
-  }
-  
-  /**
-   * Toggle between light and dark themes
-   */
+
   function toggleTheme() {
-    const currentTheme = getCurrentTheme();
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    const isLight = document.body.classList.contains(LIGHT_MODE_CLASS);
+    const newTheme = isLight ? "dark" : "light";
     applyTheme(newTheme);
-    saveTheme(newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
   }
-  
-  // Apply saved theme immediately (before page renders)
+
   applyTheme(getSavedTheme());
-  
-  // Set up event listener once DOM is ready
-  document.addEventListener('DOMContentLoaded', function() {
-    const toggleButton = document.getElementById('theme-toggle-button');
-    if (toggleButton) {
-      toggleButton.addEventListener('click', toggleTheme);
+
+  const themeBtn = document.getElementById("theme-toggle-button");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", toggleTheme);
+  }
+
+  // --------------------------------------------------------------------------
+  // Modal Utilities
+  // --------------------------------------------------------------------------
+  function openModal(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) overlay.classList.add("active");
+  }
+
+  function closeModal(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) overlay.classList.remove("active");
+  }
+
+  function wireModal(buttonId, overlayId, closeId) {
+    const openBtn = document.getElementById(buttonId);
+    const closeBtn = document.getElementById(closeId);
+    const overlay = document.getElementById(overlayId);
+
+    if (openBtn) {
+      openBtn.addEventListener("click", () => openModal(overlayId));
     }
-  });
-})();
 
-// ============================================================================
-// Navigation Loader (Existing)
-// ============================================================================
-fetch("/study/Shared/nav.html")
-  .then(r => r.text())
-  .then(html => {
-    const nav = document.querySelector("nav");
-    if (!nav) return;
-    nav.innerHTML = html;
-  });
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => closeModal(overlayId));
+    }
 
-  // Auto-apply (active tab logic)
-  if (link.href === location.href) {
-  link.classList.add("active");
-}
+    if (overlay) {
+      overlay.addEventListener("click", e => {
+        if (e.target.classList.contains("modal-backdrop")) {
+          closeModal(overlayId);
+        }
+      });
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // About & Keybinds Modals
+  // --------------------------------------------------------------------------
+  wireModal("about-button", "about-modal-overlay", "about-modal-close");
+  wireModal("keybinds-button", "keybinds-modal-overlay", "keybinds-modal-close");
+
+});
