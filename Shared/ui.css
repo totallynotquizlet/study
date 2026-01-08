@@ -16,6 +16,7 @@ header h1 {
     transition: all 0.3s ease;
     display: block;
     margin: 0 auto;
+    gap: 0.75rem;
 }
 
 /* Navigation Tabs */
