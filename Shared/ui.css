@@ -34,6 +34,17 @@ header nav {
     /* REMOVED: margin-bottom: 2rem; */
 }
 
+/* Header bug fix */
+header {
+    width: 100%;
+}
+
+header nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .nav-button {
     background: transparent;
     color: var(--color-text-secondary);
