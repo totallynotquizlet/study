@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Totally Not Found</title>
+    <title>404 - totallynotquizlet</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -21,6 +22,7 @@
             --color-text-primary: #ffffff;
             --color-text-secondary: #f0f3ff;
             --color-border: #3a497c;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
             --border-radius-card: 24px;
             --border-radius-button: 12px;
@@ -38,6 +40,7 @@
             --color-text-primary: #303545;
             --color-text-secondary: #586380;
             --color-border: #e4e7eb;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-lg: 0 10px 30px rgba(48,53,69,0.15);
         }
 
@@ -49,6 +52,12 @@
             font-weight: 500;
             transition: background-color 0.3s ease, color 0.3s ease;
             overflow-x: hidden;
+            
+            /* Disable Text Selection */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         /* --- Animations --- */
@@ -69,6 +78,31 @@
         .slide-out-left { animation: slide-out-left 0.2s ease-out forwards; }
         .slide-in-right { animation: slide-in-right 0.2s ease-out forwards; }
         .fade-in { animation: fadeIn 0.5s ease forwards; }
+
+        /* --- Navigation Styles --- */
+        #header-logo {
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button {
+            background: transparent;
+            color: var(--color-text-secondary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0;
+            border-bottom: 4px solid transparent;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            color: var(--color-text-primary);
+            border-bottom-color: var(--color-border);
+        }
 
         /* --- Flashcard Specifics --- */
         .perspective-container {
@@ -106,7 +140,6 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            /* Fix for 3D rendering context */
             transform: translateZ(0); 
         }
 
@@ -177,23 +210,123 @@
         body:not(.light-mode) #theme-icon-sun { display: block; }
         body:not(.light-mode) #theme-icon-moon { display: none; }
 
+        /* --- Footer Styles --- */
+        footer {
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+        .footer-link {
+            transition: color 0.2s ease;
+        }
+        .footer-link:hover {
+            color: var(--color-primary);
+        }
+
+        /* --- Modal Styles --- */
+        #about-modal-overlay,
+        #keybinds-modal-overlay {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #about-modal-overlay.visible,
+        #keybinds-modal-overlay.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        #about-modal-overlay .modal-backdrop,
+        #keybinds-modal-overlay .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        #about-modal-content,
+        #keybinds-modal-content {
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-lg);
+            color: var(--color-text-primary);
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #about-modal-overlay.visible #about-modal-content,
+        #keybinds-modal-overlay.visible #keybinds-modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        #about-modal-close,
+        #keybinds-modal-close {
+            color: var(--color-text-secondary);
+            transition: color 0.2s ease;
+            background: none;
+            border: none;
+            line-height: 1;
+            cursor: pointer;
+        }
+        #about-modal-close:hover,
+        #keybinds-modal-close:hover {
+            color: var(--color-text-primary);
+        }
+
+        /* Keybind list specific styles */
+        .keybind-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .keybind-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .keybind-list kbd {
+            background-color: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 0.25rem 0.6rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .keybind-list span {
+            color: var(--color-text-secondary);
+        }
+
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Theme Toggle (Top Right) -->
+    <!-- Top Controls -->
     <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300">
         <span id="theme-icon-sun" class="text-3xl" style="line-height: 1;">☼</span>
         <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
     </button>
 
+    <!-- Logo & Header -->
+    <img src="favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50">
+    
+    <header class="pt-12 mb-4 w-full">
+        <h1 class="text-3xl font-black text-center mb-6" style="color: var(--color-text-primary);">Totally Not Quizlet</h1>
+        <nav class="flex flex-wrap justify-center p-2 gap-1 md:gap-2 border-b-2" style="border-color: var(--color-border);">
+            <a href="https://totallynotquizlet.github.io/study/flashcards" class="nav-button">Flashcards</a>
+            <a href="https://totallynotquizlet.github.io/study/learn" class="nav-button">Learn</a>
+            <a href="https://totallynotquizlet.github.io/study/match" class="nav-button">Match</a> 
+            <a href="https://totallynotquizlet.github.io/study/type" class="nav-button">Type</a>
+            <a href="https://totallynotquizlet.github.io/study/create" class="nav-button">Create</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
     <div class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-4xl mx-auto w-full fade-in">
         
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-black mb-2" style="color: var(--color-primary);">404</h1>
-            <p class="text-xl" style="color: var(--color-text-secondary);">This page is Totally Not Found</p>
-        </header>
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-black mb-2" style="color: var(--color-primary);">404 Error</h2>
+            <p class="text-xl" style="color: var(--color-text-secondary);">Page Not Found</p>
+        </div>
 
         <!-- Main Flashcard Area -->
         <div class="perspective-container w-full mb-8 relative">
@@ -231,9 +364,90 @@
 
     </div>
 
+    <!-- Footer -->
+    <footer class="text-center p-6 mt-8 w-full">
+        <p class="mb-2">Created by Jacob Nedell</p>
+        <div class="flex justify-center flex-wrap gap-4">
+            <button id="about-button" class="footer-link underline cursor-pointer bg-transparent border-none">About</button>
+            <button id="keybinds-button" class="footer-link underline cursor-pointer bg-transparent border-none">Keybinds</button>
+
+            <a href="https://totallynotquizlet.github.io/memorize/" class="footer-link underline">
+                tnq memorize
+            </a>
+            
+            <a href="https://forms.gle/aorM6MFQvaTMf16j9" class="footer-link underline" target="_blank" rel="noopener noreferrer">
+                Bug Report
+            </a>
+            
+            <a href="https://forms.gle/Z1xESserXb1NVVDv6" class="footer-link underline" target="_blank" rel="noopener noreferrer">
+                Feature Request
+            </a>
+        </div>
+    </footer>
+
+    <!-- About Modal -->
+    <div id="about-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0"></div>
+        <div id="about-modal-content" class="relative w-full max-w-md p-6 md:p-8 rounded-2xl">
+            <button id="about-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold mb-4">About This Site</h2>
+            <p>
+                This study site was created to be an alternative to other options that bombard you 
+                with ads or make you pay to use them. The site includes flashcards, multiple 
+                choice questions, matching questions, and text questions with AI to intelligently help you memorize for school! With the 
+                base64 URLs, you can share study sets you've created without having to create an 
+                account and risk getting your personal information sold. Simply press the "Share 
+                Deck" button in the top menu to instantly copy the link to your clipboard for fast 
+                sharing. Your progress is stored locally in your browser and will not be deleted 
+                unless you clear your history or site data. This site is still under works 
+                and will contine to bring new features over time. Enjoy studying!
+            </p>
+        </div>
+    </div>
+
+    <!-- Keybinds Modal -->
+    <div id="keybinds-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0"></div>
+        <div id="keybinds-modal-content" class="relative w-full max-w-lg p-6 md:p-8 rounded-2xl">
+            <button id="keybinds-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold mb-6">Keyboard Shortcuts</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Create Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>Tab</kbd><span>Move between Term and Definition fields</span></li>
+                        <li><kbd>Shift</kbd> + <kbd>Tab</kbd><span>Move to previous field</span></li>
+                        <li><kbd>Shift</kbd> + <kbd>Enter</kbd><span>Add a new, empty card below</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Flashcards Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>Space</kbd><span>Flip the current card</span></li>
+                        <li><kbd>→</kbd><span>Show the next card</span></li>
+                        <li><kbd>←</kbd><span>Show the previous card</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Learn Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>1</kbd> / <kbd>A</kbd> ... <kbd>4</kbd> / <kbd>D</kbd><span>Select an answer option</span></li>
+                        <li><kbd>Space</kbd><span>Continue after viewing feedback</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Type Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>Enter</kbd><span>Submit your answer</span></li>
+                        <li><kbd>Space</kbd><span>Continue after viewing feedback</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- 404 Deck Data ---
-        // An infinite well of knowledge (or lack thereof)
         const excuses = [
             { term: "404", def: "The page you are looking for has been moved to another dimension." },
             { term: "The Dog", def: "Ate your homework, and apparently this webpage too." },
@@ -261,9 +475,7 @@
 
         // --- Interaction Logic ---
 
-        // Back Button Logic:
-        // If there is a referrer (user came from somewhere), act as a Back button.
-        // Otherwise, it defaults to the href link (Your provided URL).
+        // Back Button Logic
         if (document.referrer && window.history.length > 1) {
             returnBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -278,41 +490,29 @@
 
         // Next Card (with Slide Animation)
         nextBtn.addEventListener('click', () => {
-            // 1. Slide out
             flashcard.parentElement.classList.add('slide-out-left');
-
-            // 2. Wait for animation, then swap data
             setTimeout(() => {
-                // Pick a random excuse (that isn't the current one)
                 let newIndex;
                 do {
                     newIndex = Math.floor(Math.random() * excuses.length);
                 } while (newIndex === currentIndex);
                 currentIndex = newIndex;
 
-                // Update text
                 frontText.textContent = excuses[currentIndex].term;
                 backText.textContent = excuses[currentIndex].def;
 
-                // Reset flip state silently
                 flashcard.classList.remove('is-flipped');
-                
-                // Remove slide-out class
                 flashcard.parentElement.classList.remove('slide-out-left');
-                
-                // 3. Slide in
                 flashcard.parentElement.classList.add('slide-in-right');
                 
-                // Cleanup slide-in class
                 setTimeout(() => {
                     flashcard.parentElement.classList.remove('slide-in-right');
                 }, 200);
 
-            }, 200); // Match CSS animation duration
+            }, 200);
         });
 
         // --- Theme Toggle Logic ---
-        // Check system preference or saved state (though for a 404, we default to dark)
         if (localStorage.getItem('theme') === 'light') {
             document.body.classList.add('light-mode');
         }
@@ -327,6 +527,28 @@
         currentIndex = Math.floor(Math.random() * excuses.length);
         frontText.textContent = excuses[currentIndex].term;
         backText.textContent = excuses[currentIndex].def;
+
+        // --- Modal Logic ---
+        function setupModal(triggerId, overlayId, closeId) {
+            const trigger = document.getElementById(triggerId);
+            const overlay = document.getElementById(overlayId);
+            const closeBtn = document.getElementById(closeId);
+            const backdrop = overlay.querySelector('.modal-backdrop');
+
+            function openModal() {
+                overlay.classList.add('visible');
+            }
+            function closeModal() {
+                overlay.classList.remove('visible');
+            }
+
+            if (trigger) trigger.addEventListener('click', openModal);
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (backdrop) backdrop.addEventListener('click', closeModal);
+        }
+
+        setupModal('about-button', 'about-modal-overlay', 'about-modal-close');
+        setupModal('keybinds-button', 'keybinds-modal-overlay', 'keybinds-modal-close');
 
     </script>
 </body>
