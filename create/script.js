@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             app.isDirty = false;
             
             // Redirect to Flashcards mode with the new hash
-            window.location.href = `../Flashcards/#${base64String}`;
+            window.location.href = `../flashcards/#${base64String}`;
 
         } catch (error) {
             console.error("Error creating deck hash:", error);

@@ -1,0 +1,141 @@
+/* --- Flashcard Mode Specific Styles --- */
+
+.perspective-container {
+    perspective: 1500px;
+    /* height is set via tailwind utility in html (h-96) */
+}
+
+.flashcard {
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-in-out;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--border-radius-card);
+    touch-action: none; /* Prevent scrolling on swipe */
+}
+
+/* This class disables the flip animation temporarily */
+.flashcard.no-flip-animation {
+    transition: opacity 0.2s ease-in-out;
+}
+
+.flashcard.is-flipped {
+    transform: rotateX(180deg);
+}
+
+.card-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background-color: var(--color-card-bg);
+    border-radius: var(--border-radius-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    border: 1px solid var(--color-border);
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-align: center;
+    /* Compositing fix */
+    transform: translateZ(0);
+}
+
+#flashcard-front p {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+#flashcard-back p {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.card-back {
+    /* Combine rotation with translateZ for stabilization */
+    transform: rotateX(180deg) translateZ(0);
+}
+
+/* --- TTS Button --- */
+.tts-button {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 10;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    background-color: rgba(0,0,0,0.1);
+    color: var(--color-text-secondary);
+    transition: all 0.2s ease;
+}
+.tts-button:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+body.light-mode .tts-button:hover {
+    color: var(--color-primary);
+}
+.tts-button:active {
+    transform: scale(0.95);
+}
+
+/* --- Navigation Controls --- */
+#flashcard-nav {
+    margin-top: 2rem;
+    align-items: center;
+}
+
+#flashcard-nav button {
+    background-color: var(--color-card-bg);
+    color: var(--color-text-primary);
+    font-weight: 700;
+    font-size: 1.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#flashcard-nav button:hover {
+    background-color: var(--color-primary-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+}
+
+body.light-mode #flashcard-nav button:hover {
+    border-color: transparent;
+}
+
+#card-counter {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+/* --- Slide Animations --- */
+@keyframes slide-out-left {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes slide-in-right {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-out-right {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+@keyframes slide-in-left {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-out-left { animation: slide-out-left 0.1s ease-out forwards; }
+.slide-in-right { animation: slide-in-right 0.1s ease-out forwards; }
+.slide-out-right { animation: slide-out-right 0.1s ease-out forwards; }
+.slide-in-left { animation: slide-in-left 0.1s ease-out forwards; }
