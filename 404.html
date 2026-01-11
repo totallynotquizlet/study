@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Totally Not Quizlet</title>
     <!-- We use a script to set the favicon dynamically to ensure it loads from root -->
-    <link rel="icon" type="image/png" href="/favicon.png" id="dynamic-favicon">
+    <link rel="icon" type="image/png" href="/study/favicon.png" id="dynamic-favicon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -119,7 +119,7 @@
 
         .nav-button:hover {
             color: var(--color-text-primary);
-            border-bottom-color: var(--color-border);
+            /* Removed border-bottom-color change to match main site */
         }
 
         /* --- Flashcard Specifics --- */
@@ -328,11 +328,10 @@
         </button>
 
         <!-- Logo & Header -->
-        <!-- Added logic to pull logo from root via JS, fallbacks here -->
-        <img src="/favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50">
+        <!-- Logic updated to use /study/ prefix for GitHub Pages compatibility -->
+        <img src="/study/favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50">
         
-        <!-- Changed pt-12 to pt-20 to space text from logo -->
-        <header class="pt-20 mb-6 w-full">
+        <header class="pt-12 mb-6 w-full">
             <h1 class="text-3xl font-black text-center mb-6" style="color: var(--color-text-primary);">Totally Not Quizlet</h1>
             <nav class="flex flex-wrap justify-center p-2 gap-1 md:gap-2 border-b-2" style="border-color: var(--color-border);">
                 <a href="https://totallynotquizlet.github.io/study/flashcards" class="nav-button">Flashcards</a>
@@ -473,11 +472,11 @@
 
     <script>
         // --- Resolve Paths Dynamically for 404 Page ---
-        // This ensures that if the 404 page is hit at /some/deep/path, we still get the logo from root
+        // We use the absolute /study/ path to ensure assets load correctly on GitHub Pages
         (function() {
             try {
-                // Determine root based on location origin (e.g., https://site.com)
-                const rootLogoPath = '/favicon.png'; 
+                // Hardcoded to /study/ based on your GitHub Pages URL
+                const rootLogoPath = '/study/favicon.png'; 
                 
                 // Update Logo
                 const logoImg = document.getElementById('header-logo');
@@ -510,7 +509,27 @@
             { term: "Page Missing.", def: "We looked everywhere, it's not here." }
         ];
 
-        let currentIndex = 0;
+        // --- Loot Pool Logic ---
+        let unusedIndices = [];
+
+        function getNextExcuseIndex() {
+            // If the pool is empty, refill it with all valid indices (0 to length-1)
+            if (unusedIndices.length === 0) {
+                unusedIndices = Array.from({length: excuses.length}, (_, i) => i);
+            }
+            
+            // Pick a random index from the available pool
+            const poolIndex = Math.floor(Math.random() * unusedIndices.length);
+            const excuseIndex = unusedIndices[poolIndex];
+            
+            // Remove the picked index from the pool so it isn't shown again until refill
+            unusedIndices.splice(poolIndex, 1);
+            
+            return excuseIndex;
+        }
+
+        let currentIndex = getNextExcuseIndex();
+        
         const flashcard = document.getElementById('flashcard');
         const frontText = document.getElementById('card-front-text');
         const backText = document.getElementById('card-back-text');
@@ -537,11 +556,8 @@
         nextBtn.addEventListener('click', () => {
             flashcard.parentElement.classList.add('slide-out-left');
             setTimeout(() => {
-                let newIndex;
-                do {
-                    newIndex = Math.floor(Math.random() * excuses.length);
-                } while (newIndex === currentIndex);
-                currentIndex = newIndex;
+                // Get the next index from our loot pool
+                currentIndex = getNextExcuseIndex();
 
                 frontText.textContent = excuses[currentIndex].term;
                 backText.textContent = excuses[currentIndex].def;
@@ -568,8 +584,7 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         });
 
-        // Initial Load Randomizer
-        currentIndex = Math.floor(Math.random() * excuses.length);
+        // Initial Load
         frontText.textContent = excuses[currentIndex].term;
         backText.textContent = excuses[currentIndex].def;
 
