@@ -10,9 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("/study/Shared/nav.html")
     .then(r => r.text())
     .then(html => {
-      const nav = document.querySelector("nav");
-      if (!nav) return;
-      nav.innerHTML = html;
+      const nav = document.querySelector("header nav");
+      if (nav) nav.innerHTML = html;
+
       applyActiveNav();
     });
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const links = document.querySelectorAll("nav a");
     links.forEach(link => {
       if (link.pathname === location.pathname) {
-        link.classList.add("Active");
+        link.classList.add("active");
       }
     });
   }
