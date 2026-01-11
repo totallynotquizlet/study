@@ -3,27 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - totallynotquizlet</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <title>404 - Totally Not Quizlet</title>
+    <!-- We use a script to set the favicon dynamically to ensure it loads from root -->
+    <link rel="icon" type="image/png" href="/favicon.png" id="dynamic-favicon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- CSS Variables (From style.css) --- */
+        /* --- CSS Variables (Matched to style.css) --- */
+        
+        /* Force scrollbar to prevent layout shift */
+        html {
+            overflow-y: scroll;
+        }
+
         :root {
             --color-primary: #4f6dff;
             --color-primary-light: #2a3b7d;
             --color-primary-dark: #3a5bf0;
             --color-secondary: #ffcd1f;
+            --color-secondary-light: #443c1c;
+            
             --color-bg: #0a092b;
             --color-bg-secondary: #1a2342;
             --color-card-bg: #232e54;
             --color-text-primary: #ffffff;
             --color-text-secondary: #f0f3ff;
             --color-border: #3a497c;
+            
+            --color-correct: #38c172;
+            --color-correct-light: #1f4f31;
+            --color-incorrect: #e3342f;
+            --color-incorrect-light: #52201f;
+
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
+            
             --border-radius-card: 24px;
             --border-radius-button: 12px;
         }
@@ -34,12 +50,15 @@
             --color-primary-light: #f0f3ff;
             --color-primary-dark: #3a4b99;
             --color-secondary: #f2b000;
+            --color-secondary-light: #fffbeb;
+            
             --color-bg: #f6f7fb;
             --color-bg-secondary: #ffffff;
             --color-card-bg: #ffffff;
             --color-text-primary: #303545;
             --color-text-secondary: #586380;
             --color-border: #e4e7eb;
+            
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-lg: 0 10px 30px rgba(48,53,69,0.15);
         }
@@ -51,7 +70,6 @@
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             transition: background-color 0.3s ease, color 0.3s ease;
-            overflow-x: hidden;
             
             /* Disable Text Selection */
             user-select: none;
@@ -298,92 +316,99 @@
 
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body>
 
-    <!-- Top Controls -->
-    <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300">
-        <span id="theme-icon-sun" class="text-3xl" style="line-height: 1;">☼</span>
-        <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-    </button>
+    <!-- Structure updated to match index.html container -->
+    <div id="app-container" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen relative flex flex-col">
 
-    <!-- Logo & Header -->
-    <img src="favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50">
-    
-    <header class="pt-12 mb-4 w-full">
-        <h1 class="text-3xl font-black text-center mb-6" style="color: var(--color-text-primary);">Totally Not Quizlet</h1>
-        <nav class="flex flex-wrap justify-center p-2 gap-1 md:gap-2 border-b-2" style="border-color: var(--color-border);">
-            <a href="https://totallynotquizlet.github.io/study/flashcards" class="nav-button">Flashcards</a>
-            <a href="https://totallynotquizlet.github.io/study/learn" class="nav-button">Learn</a>
-            <a href="https://totallynotquizlet.github.io/study/match" class="nav-button">Match</a> 
-            <a href="https://totallynotquizlet.github.io/study/type" class="nav-button">Type</a>
-            <a href="https://totallynotquizlet.github.io/study/create" class="nav-button">Create</a>
-        </nav>
-    </header>
+        <!-- Top Controls -->
+        <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300">
+            <span id="theme-icon-sun" class="text-3xl" style="line-height: 1;">☼</span>
+            <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
 
-    <!-- Main Content -->
-    <div class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-4xl mx-auto w-full fade-in">
+        <!-- Logo & Header -->
+        <!-- Added logic to pull logo from root via JS, fallbacks here -->
+        <img src="/favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50">
         
-        <div class="text-center mb-8">
-            <h2 class="text-4xl md:text-5xl font-black mb-2" style="color: var(--color-primary);">404 Error</h2>
-            <p class="text-xl" style="color: var(--color-text-secondary);">Page Not Found</p>
-        </div>
+        <!-- Changed pt-12 to pt-20 to space text from logo -->
+        <header class="pt-20 mb-6 w-full">
+            <h1 class="text-3xl font-black text-center mb-6" style="color: var(--color-text-primary);">Totally Not Quizlet</h1>
+            <nav class="flex flex-wrap justify-center p-2 gap-1 md:gap-2 border-b-2" style="border-color: var(--color-border);">
+                <a href="https://totallynotquizlet.github.io/study/flashcards" class="nav-button">Flashcards</a>
+                <a href="https://totallynotquizlet.github.io/study/learn" class="nav-button">Learn</a>
+                <a href="https://totallynotquizlet.github.io/study/match" class="nav-button">Match</a> 
+                <a href="https://totallynotquizlet.github.io/study/type" class="nav-button">Type</a>
+                <a href="https://totallynotquizlet.github.io/study/create" class="nav-button">Create</a>
+            </nav>
+        </header>
 
-        <!-- Main Flashcard Area -->
-        <div class="perspective-container w-full mb-8 relative">
-            <div id="flashcard" class="flashcard">
-                <!-- Front -->
-                <div class="card-face">
-                    <span class="card-label">Term</span>
-                    <p id="card-front-text" class="card-term">Page Missing</p>
-                    <p class="mt-4 text-sm opacity-50">(Click to flip)</p>
-                </div>
-                <!-- Back -->
-                <div class="card-face card-back">
-                    <span class="card-label">Definition</span>
-                    <p id="card-back-text" class="card-def">We looked everywhere. It's not here.</p>
+        <!-- Main Content -->
+        <div class="flex-grow flex flex-col items-center justify-center w-full fade-in">
+            
+            <div class="text-center mb-8">
+                <h2 class="text-4xl md:text-5xl font-black mb-2" style="color: var(--color-primary);">404</h2>
+                <p class="text-xl" style="color: var(--color-text-secondary);">Page Not Found</p>
+            </div>
+
+            <!-- Main Flashcard Area -->
+            <div class="perspective-container w-full mb-8 relative">
+                <div id="flashcard" class="flashcard">
+                    <!-- Front -->
+                    <div class="card-face">
+                        <span class="card-label">Term</span>
+                        <p id="card-front-text" class="card-term">Page Missing</p>
+                        <p class="mt-4 text-sm opacity-50">(Click to flip)</p>
+                    </div>
+                    <!-- Back -->
+                    <div class="card-face card-back">
+                        <span class="card-label">Definition</span>
+                        <p id="card-back-text" class="card-def">We looked everywhere. It's not here.</p>
+                    </div>
                 </div>
             </div>
+
+            <!-- Controls -->
+            <div class="flex flex-col md:flex-row gap-4 w-full justify-center items-center">
+                <a id="return-home-btn" href="https://totallynotquizlet.github.io/study/" class="secondary-action-button py-3 px-8 text-lg w-full md:w-auto text-center">
+                    Go Back
+                </a>
+                <button id="next-card-btn" class="main-action-button py-3 px-8 text-lg w-full md:w-auto shadow-lg flex items-center justify-center gap-2">
+                    Next Excuse
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </button>
+            </div>
+
+            <p class="mt-8 text-center text-sm opacity-50">
+                Keep clicking "Next Excuse" to study why you are lost.
+            </p>
+
         </div>
 
-        <!-- Controls -->
-        <div class="flex flex-col md:flex-row gap-4 w-full justify-center items-center">
-            <a id="return-home-btn" href="https://totallynotquizlet.github.io/study/" class="secondary-action-button py-3 px-8 text-lg w-full md:w-auto text-center">
-                Go Back
-            </a>
-            <button id="next-card-btn" class="main-action-button py-3 px-8 text-lg w-full md:w-auto shadow-lg flex items-center justify-center gap-2">
-                Next Excuse
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-            </button>
-        </div>
+        <!-- Footer -->
+        <footer class="text-center p-6 mt-8 w-full">
+            <p class="mb-2">Created by Jacob Nedell</p>
+            <div class="flex justify-center flex-wrap gap-4">
+                <button id="about-button" class="footer-link underline cursor-pointer bg-transparent border-none">About</button>
+                <button id="keybinds-button" class="footer-link underline cursor-pointer bg-transparent border-none">Keybinds</button>
 
-        <p class="mt-8 text-center text-sm opacity-50">
-            Keep clicking "Next Excuse" to study why you are lost.
-        </p>
+                <a href="https://totallynotquizlet.github.io/memorize/" class="footer-link underline">
+                    tnq memorize
+                </a>
+                
+                <a href="https://forms.gle/aorM6MFQvaTMf16j9" class="footer-link underline" target="_blank" rel="noopener noreferrer">
+                    Bug Report
+                </a>
+                
+                <a href="https://forms.gle/Z1xESserXb1NVVDv6" class="footer-link underline" target="_blank" rel="noopener noreferrer">
+                    Feature Request
+                </a>
+            </div>
+        </footer>
 
     </div>
-
-    <!-- Footer -->
-    <footer class="text-center p-6 mt-8 w-full">
-        <p class="mb-2">Created by Jacob Nedell</p>
-        <div class="flex justify-center flex-wrap gap-4">
-            <button id="about-button" class="footer-link underline cursor-pointer bg-transparent border-none">About</button>
-            <button id="keybinds-button" class="footer-link underline cursor-pointer bg-transparent border-none">Keybinds</button>
-
-            <a href="https://totallynotquizlet.github.io/memorize/" class="footer-link underline">
-                tnq memorize
-            </a>
-            
-            <a href="https://forms.gle/aorM6MFQvaTMf16j9" class="footer-link underline" target="_blank" rel="noopener noreferrer">
-                Bug Report
-            </a>
-            
-            <a href="https://forms.gle/Z1xESserXb1NVVDv6" class="footer-link underline" target="_blank" rel="noopener noreferrer">
-                Feature Request
-            </a>
-        </div>
-    </footer>
 
     <!-- About Modal -->
     <div id="about-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -447,6 +472,25 @@
     </div>
 
     <script>
+        // --- Resolve Paths Dynamically for 404 Page ---
+        // This ensures that if the 404 page is hit at /some/deep/path, we still get the logo from root
+        (function() {
+            try {
+                // Determine root based on location origin (e.g., https://site.com)
+                const rootLogoPath = '/favicon.png'; 
+                
+                // Update Logo
+                const logoImg = document.getElementById('header-logo');
+                if (logoImg) logoImg.src = rootLogoPath;
+                
+                // Update Favicon Link
+                const favIcon = document.getElementById('dynamic-favicon');
+                if (favIcon) favIcon.href = rootLogoPath;
+            } catch (e) {
+                console.warn("Could not dynamically set paths:", e);
+            }
+        })();
+
         // --- 404 Deck Data ---
         const excuses = [
             { term: "404", def: "The page you are looking for has been moved to another dimension." },
@@ -462,7 +506,8 @@
             { term: "Loading...", def: "Still loading... Forever loading..." },
             { term: "You are here", def: "But the page is over there." },
             { term: "There seems to be a problem", def: "Yep, still a problem." },
-            { term: "Too bad there's a 404", def: "I guess you can't study anymore." }
+            { term: "Too bad there's a 404", def: "I guess you can't study anymore." },
+            { term: "Page Missing.", def: "We looked everywhere, it's not here." }
         ];
 
         let currentIndex = 0;
