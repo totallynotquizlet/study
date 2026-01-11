@@ -1,148 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>404 – Totally Not Quizlet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Totally Not Found</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- CSS Variables (From style.css) --- */
+        :root {
+            --color-primary: #4f6dff;
+            --color-primary-light: #2a3b7d;
+            --color-primary-dark: #3a5bf0;
+            --color-secondary: #ffcd1f;
+            --color-bg: #0a092b;
+            --color-bg-secondary: #1a2342;
+            --color-card-bg: #232e54;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #f0f3ff;
+            --color-border: #3a497c;
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
+            --border-radius-card: 24px;
+            --border-radius-button: 12px;
+        }
 
-  <!-- Shared Styles -->
-  <link rel="stylesheet" href="../Shared/base.css">
-  <link rel="stylesheet" href="../Shared/ui.css">
+        /* Light Mode Variables */
+        body.light-mode {
+            --color-primary: #4257b2;
+            --color-primary-light: #f0f3ff;
+            --color-primary-dark: #3a4b99;
+            --color-secondary: #f2b000;
+            --color-bg: #f6f7fb;
+            --color-bg-secondary: #ffffff;
+            --color-card-bg: #ffffff;
+            --color-text-primary: #303545;
+            --color-text-secondary: #586380;
+            --color-border: #e4e7eb;
+            --shadow-lg: 0 10px 30px rgba(48,53,69,0.15);
+        }
 
-  <!-- Match main site -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+        /* --- Base Styles --- */
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slide-out-left {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-100%); opacity: 0; }
+        }
+        @keyframes slide-in-right {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .slide-out-left { animation: slide-out-left 0.2s ease-out forwards; }
+        .slide-in-right { animation: slide-in-right 0.2s ease-out forwards; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+
+        /* --- Flashcard Specifics --- */
+        .perspective-container {
+            perspective: 1500px;
+            height: 400px;
+        }
+
+        .flashcard {
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--border-radius-card);
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .flashcard.is-flipped {
+            transform: rotateX(180deg);
+        }
+
+        .card-face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background-color: var(--color-card-bg);
+            border-radius: var(--border-radius-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem;
+            border: 1px solid var(--color-border);
+            text-align: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* Fix for 3D rendering context */
+            transform: translateZ(0); 
+        }
+
+        .card-back {
+            transform: rotateX(180deg) translateZ(0);
+        }
+
+        .card-term {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .card-def {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .card-label {
+            position: absolute;
+            top: 2rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--color-primary);
+            text-transform: uppercase;
+        }
+
+        /* --- Buttons --- */
+        .main-action-button {
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: 700;
+            border-radius: var(--border-radius-button);
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .main-action-button:hover {
+            background-color: var(--color-primary-dark);
+        }
+        .main-action-button:active {
+            transform: scale(0.98);
+        }
+
+        .secondary-action-button {
+            background-color: var(--color-card-bg);
+            color: var(--color-text-secondary);
+            font-weight: 700;
+            border-radius: var(--border-radius-button);
+            border: 2px solid var(--color-border);
+            transition: all 0.2s ease;
+        }
+        .secondary-action-button:hover {
+            background-color: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            border-color: var(--color-text-secondary);
+        }
+
+        /* --- Theme Toggle --- */
+        #theme-toggle-button {
+            color: var(--color-text-secondary);
+        }
+        #theme-toggle-button:hover {
+            color: var(--color-secondary);
+            background-color: var(--color-card-bg);
+        }
+        body.light-mode #theme-icon-sun { display: none; }
+        body.light-mode #theme-icon-moon { display: block; }
+        body:not(.light-mode) #theme-icon-sun { display: block; }
+        body:not(.light-mode) #theme-icon-moon { display: none; }
+
+    </style>
 </head>
+<body class="flex flex-col min-h-screen">
 
-<body>
-  <div id="app-container" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen flex flex-col items-center justify-center text-center">
+    <!-- Theme Toggle (Top Right) -->
+    <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300">
+        <span id="theme-icon-sun" class="text-3xl" style="line-height: 1;">☼</span>
+        <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+    </button>
 
-    <!-- Title -->
-    <h1 class="text-5xl font-extrabold mb-2">404</h1>
-    <p class="text-muted mb-8">
-      This page is not in the study set.
-    </p>
+    <div class="flex-grow flex flex-col items-center justify-center p-4 md:p-8 max-w-4xl mx-auto w-full fade-in">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-black mb-2" style="color: var(--color-primary);">404</h1>
+            <p class="text-xl" style="color: var(--color-text-secondary);">This page is Totally Not Found</p>
+        </header>
 
-    <!-- Flashcard -->
-    <div id="lost-card" class="lost-card mb-8">
-      <div class="card-inner">
-        <div class="card-face card-front">
-          <p>Term:</p>
-          <strong>Where is this page?</strong>
+        <!-- Main Flashcard Area -->
+        <div class="perspective-container w-full mb-8 relative">
+            <div id="flashcard" class="flashcard">
+                <!-- Front -->
+                <div class="card-face">
+                    <span class="card-label">Term</span>
+                    <p id="card-front-text" class="card-term">Page Missing</p>
+                    <p class="mt-4 text-sm opacity-50">(Click to flip)</p>
+                </div>
+                <!-- Back -->
+                <div class="card-face card-back">
+                    <span class="card-label">Definition</span>
+                    <p id="card-back-text" class="card-def">We looked everywhere. It's not here.</p>
+                </div>
+            </div>
         </div>
-        <div class="card-face card-back">
-          <p>Definition:</p>
-          <strong>It doesn’t exist.<br>Sorry.</strong>
+
+        <!-- Controls -->
+        <div class="flex flex-col md:flex-row gap-4 w-full justify-center items-center">
+            <a id="return-home-btn" href="https://totallynotquizlet.github.io/study/" class="secondary-action-button py-3 px-8 text-lg w-full md:w-auto text-center">
+                Go Back
+            </a>
+            <button id="next-card-btn" class="main-action-button py-3 px-8 text-lg w-full md:w-auto shadow-lg flex items-center justify-center gap-2">
+                Next Excuse
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+            </button>
         </div>
-      </div>
+
+        <p class="mt-8 text-center text-sm opacity-50">
+            Keep clicking "Next Excuse" to study why you are lost.
+        </p>
+
     </div>
 
-    <!-- Buttons -->
-    <div class="flex gap-4 flex-wrap justify-center">
-      <a href="/" class="primary-button">
-        Go Home
-      </a>
-      <button id="recover-btn" class="secondary-button">
-        Recover My Set
-      </button>
-    </div>
+    <script>
+        // --- 404 Deck Data ---
+        // An infinite well of knowledge (or lack thereof)
+        const excuses = [
+            { term: "404", def: "The page you are looking for has been moved to another dimension." },
+            { term: "The Dog", def: "Ate your homework, and apparently this webpage too." },
+            { term: "Study Break", def: "You've reached the void. Take a deep breath. Okay, now go back." },
+            { term: "Schrödinger's Page", def: "The page exists and does not exist simultaneously. Right now, it doesn't." },
+            { term: "Ctrl + Z", def: "Undo. Undo! UNDO!! ...It's not working." },
+            { term: "Grades", def: "Falling... just like this server connection (kidding, it's just a 404)." },
+            { term: "Teacher", def: "I don't know, can you go to the bathroom? Also, this page is missing." },
+            { term: "Ghost in the Machine", def: "Spooky noises. No data found." },
+            { term: "Error 418", def: "I'm a teapot. This server refuses to brew coffee." },
+            { term: "Syntax Error", def: "We forgot a semi-colon somewhere and now everything is gone." },
+            { term: "Loading...", def: "Still loading... Forever loading..." },
+            { term: "You are here", def: "But the page is over there." },
+            { term: "There seems to be a problem", def: "Yep, still a problem." },
+            { term: "Too bad there's a 404", def: "I guess you can't study anymore." }
+        ];
 
-    <!-- Footer joke -->
-    <p class="text-xs text-muted mt-10">
-      This error was studied for 0 seconds.
-    </p>
+        let currentIndex = 0;
+        const flashcard = document.getElementById('flashcard');
+        const frontText = document.getElementById('card-front-text');
+        const backText = document.getElementById('card-back-text');
+        const nextBtn = document.getElementById('next-card-btn');
+        const themeBtn = document.getElementById('theme-toggle-button');
+        const returnBtn = document.getElementById('return-home-btn');
 
-  </div>
+        // --- Interaction Logic ---
 
-  <style>
-    /* Flashcard styling using TNQ palette */
-    .lost-card {
-      width: 320px;
-      height: 180px;
-      perspective: 1000px;
-      cursor: pointer;
-    }
+        // Back Button Logic:
+        // If there is a referrer (user came from somewhere), act as a Back button.
+        // Otherwise, it defaults to the href link (Your provided URL).
+        if (document.referrer && window.history.length > 1) {
+            returnBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.history.back();
+            });
+        }
 
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transition: transform 0.6s ease;
-      transform-style: preserve-3d;
-    }
+        // Flip Card
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('is-flipped');
+        });
 
-    .lost-card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
+        // Next Card (with Slide Animation)
+        nextBtn.addEventListener('click', () => {
+            // 1. Slide out
+            flashcard.parentElement.classList.add('slide-out-left');
 
-    .card-face {
-      position: absolute;
-      inset: 0;
-      background: var(--color-primary-light);
-      border: 2px solid var(--color-primary);
-      border-radius: 14px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      backface-visibility: hidden;
-    }
+            // 2. Wait for animation, then swap data
+            setTimeout(() => {
+                // Pick a random excuse (that isn't the current one)
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * excuses.length);
+                } while (newIndex === currentIndex);
+                currentIndex = newIndex;
 
-    .card-face p {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      margin-bottom: 6px;
-    }
+                // Update text
+                frontText.textContent = excuses[currentIndex].term;
+                backText.textContent = excuses[currentIndex].def;
 
-    .card-front strong {
-      font-size: 1.3rem;
-    }
+                // Reset flip state silently
+                flashcard.classList.remove('is-flipped');
+                
+                // Remove slide-out class
+                flashcard.parentElement.classList.remove('slide-out-left');
+                
+                // 3. Slide in
+                flashcard.parentElement.classList.add('slide-in-right');
+                
+                // Cleanup slide-in class
+                setTimeout(() => {
+                    flashcard.parentElement.classList.remove('slide-in-right');
+                }, 200);
 
-    .card-back {
-      transform: rotateY(180deg);
-    }
+            }, 200); // Match CSS animation duration
+        });
 
-    /* Button reuse (matches TNQ look) */
-    .primary-button {
-      background: var(--color-primary);
-      color: white;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
+        // --- Theme Toggle Logic ---
+        // Check system preference or saved state (though for a 404, we default to dark)
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
 
-    .primary-button:hover {
-      background: var(--color-primary-dark);
-    }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        });
 
-    .secondary-button {
-      border: 2px solid var(--color-primary);
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
+        // Initial Load Randomizer
+        currentIndex = Math.floor(Math.random() * excuses.length);
+        frontText.textContent = excuses[currentIndex].term;
+        backText.textContent = excuses[currentIndex].def;
 
-    .secondary-button:hover {
-      background: var(--color-primary-light);
-    }
-  </style>
-
-  <script>
-    const card = document.getElementById("lost-card");
-    card.addEventListener("click", () => {
-      card.classList.toggle("flipped");
-    });
-
-    document.getElementById("recover-btn").addEventListener("click", () => {
-      if (location.hash) {
-        location.href = "/flashcards/" + location.hash;
-      } else {
-        location.href = "/";
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
