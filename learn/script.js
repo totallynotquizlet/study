@@ -80,9 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         state.deck = deck;
         dom.headerTitle.textContent = deck.title || "Learn Mode";
-        
-        // NOTE: Settings button visibility is now handled solely by CSS (no 'hidden' class in HTML)
-        // We do NOT toggle it here anymore.
+        dom.settingsButton.classList.remove('hidden'); // Show settings button
 
         // Check if we have enough cards
         if (state.deck.cards.length < 4) {
