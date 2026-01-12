@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcards | Totally Not Quizlet</title>
+    <title>Flashcards | totallynotquizlet</title>
     
     <!-- Shared Styles -->
     <link rel="stylesheet" href="../Shared/base.css">
@@ -41,7 +41,7 @@
         </button>
 
         <!-- Header -->
-        <img src="../favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 z-50">
+        <img src="../favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50">
         <header class="mb-6 pt-20">
             <h1 id="header-title" class="text-3xl text-center mb-6">Totally Not Quizlet</h1>
             <!-- Navigation injected by Shared/nav.js -->
@@ -158,8 +158,12 @@
             
             <!-- Share button embedded in settings for mobile convenience -->
             <div class="pt-2">
-                 <button id="share-deck-button" class="main-action-button w-full hidden">Share Deck Link</button>
+                <button id="share-deck-button"
+                    class="main-action-button w-full px-4 py-3 text-base font-semibold text-center justify-center hidden">
+                    Share Deck Link
+                </button>
             </div>
+
         </div>
     </div>
 
