@@ -1,6 +1,7 @@
 /**
  * Learn Mode Logic
  * Handles the quiz flow, answer validation, SRS updates, and session persistence.
+ * Also handles the Settings Modal logic.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionCards: [], // Cards remaining in the current session
         currentCard: null,
         isSessionActive: false,
-        correctAnswerTimeout: null
+        correctAnswerTimeout: null,
+        settingsBeforeEdit: null // To track changes in settings modal
     };
 
     // --- DOM ELEMENTS ---
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headerTitle: document.getElementById('header-title'),
         progressBarContainer: document.getElementById('learn-progress-container'),
         progressBar: document.getElementById('learn-progress-bar'),
+        settingsButton: document.getElementById('settings-button'),
         
         // Views
         disabledView: document.getElementById('learn-mode-disabled'),
@@ -48,6 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
         switchModeBtn: document.getElementById('learn-switch-mode-button'),
         backToCreateBtn: document.getElementById('back-to-create-btn'),
         
+        // Settings Modal
+        settingsModalOverlay: document.getElementById('settings-modal-overlay'),
+        settingsModalClose: document.getElementById('settings-modal-close'),
+        settingsModalBackdrop: document.querySelector('#settings-modal-overlay .modal-backdrop'),
+        settingDeckTitle: document.getElementById('setting-deck-title'),
+        settingToggleShuffle: document.getElementById('setting-toggle-shuffle'),
+        settingToggleStartWith: document.getElementById('setting-toggle-start-with'),
+        copyDeckButton: document.getElementById('copy-deck-button'),
+
         toast: document.getElementById('toast-notification')
     };
 
@@ -68,6 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         state.deck = deck;
         dom.headerTitle.textContent = deck.title || "Learn Mode";
+        
+        // NOTE: Settings button visibility is now handled solely by CSS (no 'hidden' class in HTML)
+        // We do NOT toggle it here anymore.
 
         // Check if we have enough cards
         if (state.deck.cards.length < 4) {
@@ -89,10 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create a copy of the deck for this session
         state.sessionCards = [...state.deck.cards];
         
+        // Apply shuffle setting immediately for the new session
+        if (state.deck.settings.shuffle) {
+            shuffleArray(state.sessionCards);
+        }
+        
         // Reset local tracking properties
         state.sessionCards.forEach(card => card.skipCount = 0);
-        
-        shuffleArray(state.sessionCards);
         
         state.isSessionActive = true;
         saveSession();
@@ -356,6 +374,64 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- SETTINGS MODAL LOGIC ---
+
+    function showSettingsModal() {
+        dom.settingDeckTitle.value = state.deck.title;
+        updateSettingsToggle(dom.settingToggleShuffle, state.deck.settings.shuffle, "Shuffle");
+        updateSettingsToggle(dom.settingToggleStartWith, state.deck.settings.termFirst, "Term", "Definition");
+        
+        // Snapshot settings
+        state.settingsBeforeEdit = { ...state.deck.settings };
+        dom.settingsModalOverlay.classList.add('visible');
+    }
+
+    function hideSettingsModal() {
+        dom.settingsModalOverlay.classList.remove('visible');
+        
+        // Check if vital settings changed
+        if (state.settingsBeforeEdit.termFirst !== state.deck.settings.termFirst || 
+            state.settingsBeforeEdit.shuffle !== state.deck.settings.shuffle) {
+            
+            // Restart session with new settings
+            startNewSession();
+        }
+    }
+
+    function updateSettingsToggle(button, isActive, activeText, inactiveText = null) {
+        if (isActive) {
+            button.classList.add('active');
+            button.textContent = inactiveText ? activeText : `${activeText}: ON`;
+        } else {
+            button.classList.remove('active');
+            button.textContent = inactiveText ? inactiveText : `${activeText}: OFF`;
+        }
+    }
+
+    function handleTitleSettingChange() {
+        const newTitle = dom.settingDeckTitle.value;
+        state.deck.title = newTitle;
+        dom.headerTitle.textContent = newTitle;
+        TNQ.saveDeckToHash(state.deck);
+    }
+
+    function handleShuffleSettingChange() {
+        state.deck.settings.shuffle = !state.deck.settings.shuffle;
+        updateSettingsToggle(dom.settingToggleShuffle, state.deck.settings.shuffle, "Shuffle");
+        TNQ.saveDeckToHash(state.deck);
+    }
+
+    function handleStartWithSettingChange() {
+        state.deck.settings.termFirst = !state.deck.settings.termFirst;
+        updateSettingsToggle(dom.settingToggleStartWith, state.deck.settings.termFirst, "Term", "Definition");
+        TNQ.saveDeckToHash(state.deck);
+    }
+    
+    function copyDeckTerms() {
+        const text = state.deck.cards.map(c => `${c.term},${c.definition}`).join('\n');
+        navigator.clipboard.writeText(text).then(() => showToast("Copied to clipboard!"));
+    }
+
     // --- EVENT LISTENERS ---
 
     function addEventListeners() {
@@ -378,6 +454,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 TNQ.navigateTo('create');
             });
         }
+
+        // Settings Listeners
+        dom.settingsButton.addEventListener('click', showSettingsModal);
+        dom.settingsModalClose.addEventListener('click', hideSettingsModal);
+        dom.settingsModalBackdrop.addEventListener('click', hideSettingsModal);
+        
+        dom.settingDeckTitle.addEventListener('input', handleTitleSettingChange);
+        dom.settingToggleShuffle.addEventListener('click', handleShuffleSettingChange);
+        dom.settingToggleStartWith.addEventListener('click', handleStartWithSettingChange);
+        dom.copyDeckButton.addEventListener('click', copyDeckTerms);
 
         // Global Keybinds
         document.addEventListener('keydown', (e) => {
