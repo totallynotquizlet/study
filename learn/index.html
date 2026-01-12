@@ -1,1 +1,149 @@
-This page is under construction. Please check back later.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn - Totally Not Quizlet</title>
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../Shared/base.css">
+    <link rel="stylesheet" href="../Shared/ui.css">
+    
+    <!-- Mode Specific Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../favicon.png">
+    
+    <!-- Tailwind (Utility classes used in legacy markup) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <div id="app-container" class="max-w-4xl mx-auto p-4 md:p-8 min-h-screen relative flex flex-col">
+        
+        <!-- Header & Nav (Injected by nav.js) -->
+        <button id="theme-toggle-button" class="absolute top-6 right-6 md:top-8 md:right-10 z-50 p-2 rounded-full transition-all duration-300">
+            <span id="theme-icon-sun" class="text-3xl" style="line-height: 1;">☼</span>
+            <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <img src="../favicon.png" alt="Site Logo" id="header-logo" class="absolute top-6 md:top-8 z-50">
+        
+        <header class="mb-6 pt-20">
+            <h1 id="header-title" class="text-3xl text-center mb-6">Totally Not Quizlet</h1>
+            <nav class="flex justify-center p-2 space-x-1 md:space-x-2">
+                <!-- Navigation injected here -->
+            </nav>
+        </header>
+
+        <main id="main-content" class="flex-grow">
+
+            <!-- Progress Bar -->
+            <div id="learn-progress-container" class="progress-bar-container hidden mb-6">
+                <div id="learn-progress-bar" class="progress-bar"></div>
+            </div>
+
+            <!-- Not Enough Cards State -->
+            <div id="learn-mode-disabled" class="panel-container text-center p-8 md:p-12 hidden">
+                <h2 class="text-2xl font-semibold mb-4">Learn Mode Needs More Cards</h2>
+                <p>Learn mode requires at least 4 cards to generate quizzes. Please add more cards to your deck.</p>
+                <button id="back-to-create-btn" class="main-action-button mt-6">Go to Create</button>
+            </div>
+
+            <!-- Active Quiz State -->
+            <div id="learn-mode-quiz" class="hidden">
+                <div id="learn-question-box" class="panel-container p-6 mb-6 min-h-[150px] flex items-center justify-center">
+                    <p id="learn-term" class="text-3xl font-medium text-center"></p>
+                </div>
+                
+                <div id="learn-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <!-- Controls -->
+                <div id="learn-controls" class="flex justify-between items-center mt-6">
+                    <button id="learn-restart-session-button" class="text-sm font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors p-2">
+                        Restart
+                    </button>
+                    <button id="learn-skip-button" class="secondary-action-button px-6 py-2 rounded-lg">
+                        Skip
+                    </button>
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="learn-feedback-container" class="mt-6 flex gap-4 hidden">
+                    <div id="learn-feedback" class="flex-grow p-4 rounded-lg text-center font-medium">
+                        <span id="learn-feedback-message"></span>
+                    </div>
+                    <button id="learn-continue-button" class="continue-button hidden">Continue</button>
+                </div>
+            </div>
+
+            <!-- Complete State -->
+            <div id="learn-complete-view" class="panel-container text-center p-8 md:p-12 hidden">
+                <h2 class="text-2xl font-semibold mb-4">You've mastered this round!</h2>
+                <p class="mb-8">You answered all questions correctly.</p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <button id="learn-restart-button" class="main-action-button font-medium py-3 px-6 rounded-lg">
+                        Start Again
+                    </button>
+                    <button id="learn-switch-mode-button" class="secondary-action-button font-medium py-3 px-6 rounded-lg">
+                        Switch to Match
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="text-center p-6 mt-8 border-t border-[var(--color-border)]">
+            <p class="mb-2">Created by Jacob Nedell</p>
+            <div class="flex justify-center space-x-4">
+                <button id="about-button" class="footer-link underline cursor-pointer">About</button>
+                <button id="keybinds-button" class="footer-link underline cursor-pointer">Keybinds</button>
+            </div>
+        </footer>
+        
+        <!-- Toast Notification -->
+        <div id="toast-notification" class="fixed bottom-6 right-6 py-3 px-5 rounded-lg shadow-xl opacity-0 translate-y-4 transition-all duration-300 z-50"></div>
+
+    </div>
+
+    <!-- Modals (Injected structure assumed or handled by shared scripts if they exist, keeping placeholders for nav.js logic) -->
+    <div id="about-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="about-modal-content" class="modal-content relative">
+            <button id="about-modal-close" class="modal-close-button">&times;</button>
+            <h2 class="text-2xl font-bold mb-4">About This Site</h2>
+            <p>This study site was created to be an alternative to other options...</p>
+        </div>
+    </div>
+
+    <div id="keybinds-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div id="keybinds-modal-content" class="modal-content relative">
+            <button id="keybinds-modal-close" class="modal-close-button">&times;</button>
+            <h2 class="text-2xl font-bold mb-6">Keyboard Shortcuts</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Learn Mode</h3>
+                    <ul class="keybind-list">
+                        <li><kbd>1</kbd> / <kbd>A</kbd> ... <kbd>4</kbd> / <kbd>D</kbd><span>Select an answer option</span></li>
+                        <li><kbd>Space</kbd><span>Continue after viewing feedback</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared Scripts -->
+    <script src="../Shared/storage.js"></script>
+    <script src="../Shared/nav.js"></script>
+    
+    <!-- Mode Script -->
+    <script src="script.js"></script>
+</body>
+</html>

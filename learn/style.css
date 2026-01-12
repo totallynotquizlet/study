@@ -1,0 +1,125 @@
+/* Legacy Learn Mode Styles
+    Extracted from original style.css
+*/
+
+/* --- Layout Components --- */
+
+#learn-question-box {
+    background-color: var(--color-bg-secondary);
+    /* Border and Shadow handled by panel-container class in HTML, but reinforcing here if needed */
+    border-radius: var(--border-radius-card);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+}
+
+#learn-term {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    user-select: text;
+}
+
+/* --- Options Grid --- */
+
+.learn-option {
+    background-color: var(--color-card-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius-button);
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    user-select: text;
+}
+
+.learn-option:not(:disabled):hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-bg-secondary);
+    cursor: pointer;
+}
+
+.learn-option.correct {
+    background-color: var(--color-correct-light);
+    border-color: var(--color-correct);
+    color: var(--color-correct);
+    font-weight: 700;
+}
+
+.learn-option.incorrect {
+    background-color: var(--color-incorrect-light);
+    border-color: var(--color-incorrect);
+    color: var(--color-incorrect);
+    font-weight: 700;
+}
+
+.learn-option:disabled {
+    opacity: 1; /* Keep full opacity to show results clearly */
+    cursor: not-allowed;
+}
+
+/* --- Feedback Section --- */
+
+#learn-feedback {
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: var(--border-radius-button);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#learn-feedback.correct {
+    background-color: var(--color-correct-light);
+    color: var(--color-correct);
+}
+
+#learn-feedback.incorrect {
+    background-color: var(--color-incorrect-light);
+    color: var(--color-incorrect);
+}
+
+/* --- Controls --- */
+
+/* Skip button specific styling if not covered by secondary-action-button */
+#learn-skip-button {
+    /* Styles inherited from utility classes in HTML */
+}
+
+/* Restart Session specific */
+#learn-restart-session-button {
+    /* Styles inherited from utility classes in HTML */
+}
+
+/* Continue Button */
+.continue-button {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: var(--border-radius-button);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.continue-button:hover {
+    background-color: var(--color-primary-dark);
+}
+
+/* --- States --- */
+#learn-mode-disabled p,
+#learn-complete-view p {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+}
