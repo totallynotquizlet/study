@@ -1,1 +1,132 @@
-This page is under construction. Please check back later.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match - Totally Not Quizlet</title>
+    <link rel="stylesheet" href="../Shared/base.css">
+    <link rel="stylesheet" href="../Shared/ui.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../favicon.png">
+</head>
+<body>
+    <div id="app-container">
+        
+        <button id="theme-toggle-button" class="icon-button" style="position: absolute; top: 1.5rem; right: 1.5rem; z-index: 50;">
+            <span id="theme-icon-sun" style="font-size: 1.5rem; line-height: 1;">☼</span>
+            <svg id="theme-icon-moon" class="hidden" style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <header style="margin-bottom: 1.5rem; padding-top: 5rem;">
+            <h1 id="header-title">Match</h1>
+            <nav></nav>
+        </header>
+
+        <main id="main-content">
+            
+            <div id="match-mode-disabled" class="panel-container hidden" style="text-align: center; padding: 3rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Match Mode Needs More Cards</h2>
+                <p style="color: var(--color-text-secondary);">This mode requires at least 2 cards in your deck. Please add more cards to get started.</p>
+            </div>
+
+            <div id="match-start-screen" class="panel-container hidden" style="text-align: center; padding: 3rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Match Game</h2>
+                <p style="color: var(--color-text-secondary); margin-bottom: 2rem;">Find the matching terms and definitions as fast as you can!</p>
+                
+                <div style="margin-bottom: 2rem; max-width: 24rem; margin-left: auto; margin-right: auto;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <label for="match-count-slider" style="font-weight: 700; color: var(--color-text-secondary); font-size: 0.875rem;">TERMS PER ROUND</label>
+                        <span id="match-count-display" style="font-weight: 700; color: var(--color-primary);">10</span>
+                    </div>
+                    <input type="range" id="match-count-slider" min="4" max="20" step="2" value="10" style="width: 100%;">
+                </div>
+
+                <button id="match-start-button" class="main-action-button" style="padding: 0.75rem 1.5rem;">
+                    Start Game
+                </button>
+            </div>
+
+            <div id="match-mode-game" class="hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="font-size: 1.25rem; font-weight: 700;">Match the pairs!</h2>
+                    <div style="text-align: right;">
+                        <div id="match-timer" style="font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary);">0.0s</div>
+                        <div id="match-best-time" style="font-size: 0.875rem; color: var(--color-text-secondary);">Best: --.-s</div>
+                    </div>
+                </div>
+                <div id="match-game-area" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div id="match-terms-list"></div>
+                    <div id="match-defs-list"></div>
+                </div>
+            </div>
+
+            <div id="match-complete-view" class="panel-container hidden" style="text-align: center; padding: 3rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">You've matched them all!</h2>
+                <p style="color: var(--color-text-secondary); margin-bottom: 2rem;">Great job! You've completed this set.</p>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button id="match-restart-button" class="main-action-button" style="padding: 0.75rem 1.5rem;">
+                        Play Again
+                    </button>
+                    <button id="match-switch-mode-button" class="secondary-action-button" style="padding: 0.75rem 1.5rem;">
+                        Switch to Type
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <footer style="border-top: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: 0.9rem; padding: 2rem 0; margin-top: 4rem; text-align: center;">
+            <p style="margin-bottom: 0.5rem;">Created by Jacob Nedell</p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <button id="about-button" style="background: none; border: none; cursor: pointer; color: var(--color-text-secondary); font-weight: 600; text-decoration: underline;">About</button>
+                <button id="keybinds-button" style="background: none; border: none; cursor: pointer; color: var(--color-text-secondary); font-weight: 600; text-decoration: underline;">Keybinds</button>
+                <a href="https://totallynotquizlet.github.io/memorize/" style="color: var(--color-text-secondary); text-decoration: underline;">tnq memorize</a>
+                <a href="https://forms.gle/aorM6MFQvaTMf16j9" target="_blank" rel="noopener noreferrer" style="color: var(--color-text-secondary); text-decoration: underline;">Bug Report</a>
+                <a href="https://forms.gle/Z1xESserXb1NVVDv6" target="_blank" rel="noopener noreferrer" style="color: var(--color-text-secondary); text-decoration: underline;">Feature Request</a>
+            </div>
+        </footer>
+
+        <div id="toast-notification"></div>
+    </div>
+
+    <div id="about-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button id="about-modal-close" class="modal-close-button">&times;</button>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">About This Site</h2>
+            <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                This study site was created to be an alternative to other options that bombard you 
+                with ads or make you pay to use them. The site includes flashcards, multiple 
+                choice questions, matching questions, and text questions with AI to intelligently help you memorize for school! With the 
+                base64 URLs, you can share study sets you've created without having to create an 
+                account and risk getting your personal information sold. Simply press the "Share 
+                Deck" button in the top menu to instantly copy the link to your clipboard for fast 
+                sharing. Your progress is stored locally in your browser and will not be deleted 
+                unless you clear your history or site data. This site is still under works 
+                and will continue to bring new features over time. Enjoy studying!
+            </p>
+        </div>
+    </div>
+
+    <div id="keybinds-modal-overlay" class="modal-overlay">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button id="keybinds-modal-close" class="modal-close-button">&times;</button>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Keyboard Shortcuts</h2>
+            <div>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Match Mode</h3>
+                <ul class="keybind-list">
+                    <li><kbd>Click</kbd><span>Select terms and definitions to match</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="../Shared/storage.js"></script>
+    <script src="../Shared/nav.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

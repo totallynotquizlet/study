@@ -1,0 +1,88 @@
+/* Match Mode Specific Styles */
+
+#match-game-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+#match-terms-list,
+#match-defs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.match-item {
+    background-color: var(--color-card-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius-button);
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+.match-item:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-bg-secondary);
+}
+
+.match-item.selected {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+body.light-mode .match-item.selected {
+    color: var(--color-primary);
+}
+
+.match-item.correct {
+    background-color: var(--color-correct-light);
+    border-color: var(--color-correct);
+    color: var(--color-correct);
+    font-weight: 700;
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: scale(0.98);
+}
+
+.match-item.incorrect {
+    background-color: var(--color-incorrect-light);
+    border-color: var(--color-incorrect);
+    color: var(--color-incorrect);
+    font-weight: 700;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    #match-game-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .match-item {
+        padding: 1rem 1.25rem;
+        min-height: 60px;
+    }
+}
