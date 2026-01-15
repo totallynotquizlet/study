@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const dom = {
         headerTitle: document.getElementById('header-title'),
+        settingsButton: document.getElementById('settings-button'),
         
         // Views
         disabledView: document.getElementById('match-mode-disabled'),
@@ -32,8 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State ---
     const state = {
         deck: null,
-        sessionCards: [],
-        itemsLeft: 0,
+        sessionCards: [], // The full shuffled deck for the session
+        batchSize: 10,    // Cards per round
+        itemsLeftInRound: 0,
         
         // Selection
         selectedTerm: null,
@@ -57,14 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
         state.deck = window.TNQ.getDeck();
 
         if (!state.deck) {
-            // Should be handled by storage.js redirect, but safety check:
             console.error("No deck loaded");
             return;
         }
 
-        // 2. Set Header Title
+        // 2. Set Header Title & UI Visibility
         if (state.deck.title) {
             dom.headerTitle.textContent = state.deck.title;
+        }
+        
+        // Show/Hide Settings button based on card count (Matches shared logic)
+        if (state.deck.cards.length > 0) {
+            dom.settingsButton.classList.remove('hidden');
+        } else {
+            dom.settingsButton.classList.add('hidden');
         }
 
         // 3. Load Best Time
@@ -94,8 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupSlider() {
         const totalCards = state.deck.cards.length;
         
-        // Set max to total cards
+        // Set max to total cards, min to 2
         dom.slider.max = totalCards;
+        dom.slider.min = 2;
         
         // Default logic: Try to set to 10, or total if less than 10
         const defaultVal = Math.min(10, totalCards);
@@ -112,42 +121,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Game Logic ---
 
     function startMatch() {
-        const count = parseInt(dom.slider.value, 10);
+        // 1. Initialize Session
+        // We clone the ENTIRE deck and shuffle it. 
+        // Rounds will deplete this array.
+        state.sessionCards = [...state.deck.cards];
+        shuffleArray(state.sessionCards);
         
-        // 1. Prepare Session Deck
-        // Shuffle full deck first to get random subset
-        const shuffledDeck = [...state.deck.cards];
-        shuffleArray(shuffledDeck);
+        // 2. Set Batch Size from Slider
+        state.batchSize = parseInt(dom.slider.value, 10);
         
-        // Slice based on slider
-        state.sessionCards = shuffledDeck.slice(0, count);
-        state.itemsLeft = state.sessionCards.length;
+        // 3. Start First Round
+        startRound();
+    }
+    
+    function startRound() {
+        // 1. Check if we have cards left
+        if (state.sessionCards.length === 0) {
+            handleComplete();
+            return;
+        }
 
-        // 2. Render Board
-        renderBoard();
+        // 2. Extract Batch (Do not slice yet, we slice for display, removing on match)
+        // Actually, legacy logic kept cards in the array and removed them on match.
+        // But to support "Rounds", we need to know WHICH cards are in the current round.
+        // We will move cards from `sessionCards` to a `currentRoundCards` working set.
+        
+        // Determine how many to take (Batch Size or remainder)
+        const count = Math.min(state.batchSize, state.sessionCards.length);
+        
+        // These are the cards for THIS round. 
+        // IMPORTANT: We do NOT remove them from state.sessionCards immediately?
+        // Legacy removed them on MATCH.
+        // So for now, we just pick the first `count` items to render.
+        // We will filter the `sessionCards` array as matches happen.
+        
+        const roundCards = state.sessionCards.slice(0, count);
+        state.itemsLeftInRound = count;
 
-        // 3. Start Timer
+        // 3. Render Board
+        renderBoard(roundCards);
+
+        // 4. Start Timer
         state.startTime = Date.now();
         dom.timer.textContent = '0.0s';
         if (state.timerInterval) clearInterval(state.timerInterval);
         state.timerInterval = setInterval(updateTimer, 100);
 
-        // 4. Show View
+        // 5. Show View
         showView('game');
     }
 
-    function renderBoard() {
+    function renderBoard(cards) {
         // Prepare arrays
         let termItems = [];
         let defItems = [];
 
-        state.sessionCards.forEach(card => {
-            // We use card.id (assigned by storage.js or generate transiently)
-            // If storage.js generated IDs are consistent, great. 
-            // If not, we can generate a transient ID here or use the object reference logic.
-            // Using dataset attributes is safer with strings.
-            const id = card.id || Math.random().toString(36).substr(2, 9);
+        cards.forEach(card => {
             // Ensure card has ID for tracking
+            const id = card.id || Math.random().toString(36).substr(2, 9);
             card.id = id; 
 
             termItems.push(createCardElement(card.term, id, 'term'));
@@ -215,8 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isMatch = termId === defId;
         
-        // Find the card object to update progress
-        const card = state.sessionCards.find(c => c.id === termId);
+        // Find the card object (in the full session list)
+        const cardIndex = state.sessionCards.findIndex(c => c.id === termId);
+        const card = cardIndex !== -1 ? state.sessionCards[cardIndex] : null;
 
         if (isMatch) {
             // SUCCESS
@@ -225,15 +257,19 @@ document.addEventListener('DOMContentLoaded', () => {
             term.classList.add('correct');
             def.classList.add('correct');
 
-            if (card) window.TNQ.updateCardResult(card, true);
+            if (card) {
+                window.TNQ.updateCardResult(card, true);
+                // Remove from session cards so it doesn't appear in next round
+                state.sessionCards.splice(cardIndex, 1);
+            }
 
-            state.itemsLeft--;
+            state.itemsLeftInRound--;
             state.selectedTerm = null;
             state.selectedDef = null;
             state.isChecking = false;
 
-            if (state.itemsLeft === 0) {
-                handleRoundComplete();
+            if (state.itemsLeftInRound === 0) {
+                handleRoundClear();
             }
 
         } else {
@@ -243,7 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
             term.classList.add('incorrect');
             def.classList.add('incorrect');
 
-            if (card) window.TNQ.updateCardResult(card, false);
+            if (card) {
+                window.TNQ.updateCardResult(card, false);
+                // In legacy logic: incorrect card is pushed to back of session array.
+                // However, in this Round-based logic, the card is currently ON SCREEN.
+                // We don't need to move it in the array, it stays on screen until matched.
+            }
 
             setTimeout(() => {
                 term.classList.remove('incorrect');
@@ -255,23 +296,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function handleRoundComplete() {
+    function handleRoundClear() {
         clearInterval(state.timerInterval);
-        
-        const finalTime = (Date.now() - state.startTime) / 1000;
-        
-        // Check Best Time
-        if (finalTime < state.bestTime) {
-            state.bestTime = finalTime;
+        const roundTime = (Date.now() - state.startTime) / 1000;
+
+        // Check Best Time (Per Round)
+        if (roundTime < state.bestTime) {
+            state.bestTime = roundTime;
             saveBestTime();
             updateBestTimeDisplay();
-            showToast(`New Best Time: ${finalTime.toFixed(1)}s!`);
+            showToast(`New Best Time: ${roundTime.toFixed(1)}s!`);
         }
 
-        // Wait a moment then show complete screen
-        setTimeout(() => {
-            showView('complete');
-        }, 1000);
+        // Check if more cards remain in the session
+        if (state.sessionCards.length >= 2) { // Need at least 2 for a match
+            // Auto-start next round after delay
+            setTimeout(() => {
+                startRound();
+            }, 1000);
+        } else {
+            // Session Complete
+            setTimeout(() => {
+                handleComplete();
+            }, 1000);
+        }
+    }
+
+    function handleComplete() {
+        showView('complete');
     }
 
     // --- Helpers & Utilities ---
