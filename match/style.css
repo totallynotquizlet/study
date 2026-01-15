@@ -1,18 +1,31 @@
-/* Match Mode Specific Styles */
+/* --- Match Specific Styles --- */
+/* Extracted from original style.css to maintain exact visual identity */
 
-#match-game-area {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+/* Container overrides */
+.panel-container {
+    background-color: var(--color-bg-secondary);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius-card);
+    border: 1px solid var(--color-border);
 }
 
-#match-terms-list,
-#match-defs-list {
+/* Timer text */
+#match-timer {
+    color: var(--color-text-primary);
+}
+
+/* Grid Layout helpers */
+#match-game-area {
+    width: 100%;
+}
+/* Ensure lists stack properly in the grid */
+#match-terms-list, #match-defs-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.75rem; /* Matches space-y-3 from tailwind */
 }
 
+/* The Card Item */
 .match-item {
     background-color: var(--color-card-bg);
     border: 2px solid var(--color-border);
@@ -24,13 +37,13 @@
     box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
     cursor: pointer;
+    /* Ensure items can grow in height and center text */
     min-height: 70px;
     display: flex;
     align-items: center;
-    user-select: text;
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
+    justify-content: center; /* Center text visually */
+    text-align: center;
+    word-break: break-word;
 }
 
 .match-item:hover {
@@ -40,17 +53,18 @@
     background-color: var(--color-bg-secondary);
 }
 
+/* Selected State */
 .match-item.selected {
     border-color: var(--color-primary);
     background-color: var(--color-primary-light);
     color: var(--color-primary);
     font-weight: 700;
 }
-
 body.light-mode .match-item.selected {
     color: var(--color-primary);
 }
 
+/* Correct Match State */
 .match-item.correct {
     background-color: var(--color-correct-light);
     border-color: var(--color-correct);
@@ -61,6 +75,7 @@ body.light-mode .match-item.selected {
     transform: scale(0.98);
 }
 
+/* Incorrect Match State (with Shake animation) */
 .match-item.incorrect {
     background-color: var(--color-incorrect-light);
     border-color: var(--color-incorrect);
@@ -75,14 +90,9 @@ body.light-mode .match-item.selected {
     75% { transform: translateX(5px); }
 }
 
-/* Responsive design for smaller screens */
-@media (max-width: 768px) {
-    #match-game-area {
-        grid-template-columns: 1fr;
-    }
-    
-    .match-item {
-        padding: 1rem 1.25rem;
-        min-height: 60px;
-    }
+/* Disabled/Empty text styling */
+#match-mode-disabled p,
+#match-complete-view p {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
 }
