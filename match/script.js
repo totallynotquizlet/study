@@ -26,6 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
         bestTimeDisplay: document.getElementById('match-best-time'),
         restartBtn: document.getElementById('match-restart-button'),
         
+        // Settings Modal Elements
+        settingDeckTitle: document.getElementById('setting-deck-title'),
+        settingToggleShuffle: document.getElementById('setting-toggle-shuffle'),
+        settingToggleStartWith: document.getElementById('setting-toggle-start-with'),
+        copyDeckButton: document.getElementById('copy-deck-button'),
+        
         // Toast
         toastNotification: document.getElementById('toast-notification')
     };
@@ -55,10 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialization ---
 
     function init() {
-        // Fix for modal blocking issue: Ensure they are hidden on load
-        const modals = document.querySelectorAll('.modal-overlay');
-        modals.forEach(m => m.classList.remove('visible'));
-
         // 1. Get Deck from Shared Storage
         state.deck = window.TNQ.getDeck();
 
@@ -72,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dom.headerTitle.textContent = state.deck.title;
         }
         
-        // Show/Hide Settings button based on card count (Matches shared logic)
+        // Show/Hide Settings button based on card count
         if (state.deck.cards.length > 0) {
             dom.settingsButton.classList.remove('hidden');
         } else {
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showView('start');
         }
 
-        // 5. Event Listeners
+        // 5. Wire Events
         dom.startBtn.addEventListener('click', startMatch);
         dom.restartBtn.addEventListener('click', () => {
             showView('start');
@@ -99,7 +101,92 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         dom.gameArea.addEventListener('click', handleCardClick);
         dom.slider.addEventListener('input', handleSliderInput);
+        
+        // 6. Wire Settings Modal
+        wireSettingsModal();
     }
+
+    // --- Modal Logic ---
+
+    // Manually wire settings modal because Shared/nav.js only handles About/Keybinds
+    function wireSettingsModal() {
+        const overlay = document.getElementById('settings-modal-overlay');
+        const openBtn = document.getElementById('settings-button');
+        const closeBtn = document.getElementById('settings-modal-close');
+
+        if (openBtn) {
+            openBtn.addEventListener('click', () => {
+                 overlay.classList.add('visible');
+                 updateSettingsUI(); // Refresh UI state on open
+            });
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                overlay.classList.remove('visible');
+            });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-backdrop')) {
+                    overlay.classList.remove('visible');
+                }
+            });
+        }
+        
+        // Wire internal setting buttons
+        if (dom.settingToggleShuffle) {
+            dom.settingToggleShuffle.addEventListener('click', () => {
+                state.deck.settings.shuffle = !state.deck.settings.shuffle;
+                updateSettingsUI();
+                // Note: Changing shuffle doesn't affect active match round, but saves to hash
+                window.TNQ.saveDeckToHash(state.deck);
+            });
+        }
+        
+        if (dom.settingToggleStartWith) {
+            dom.settingToggleStartWith.addEventListener('click', () => {
+                state.deck.settings.termFirst = !state.deck.settings.termFirst;
+                updateSettingsUI();
+                window.TNQ.saveDeckToHash(state.deck);
+            });
+        }
+        
+        if (dom.copyDeckButton) {
+            dom.copyDeckButton.addEventListener('click', copyDeckToClipboard);
+        }
+    }
+
+    function updateSettingsUI() {
+        dom.settingDeckTitle.value = state.deck.title || '';
+        
+        // Shuffle Button
+        if (state.deck.settings.shuffle) {
+            dom.settingToggleShuffle.classList.add('active');
+            dom.settingToggleShuffle.textContent = "Shuffle: ON";
+        } else {
+            dom.settingToggleShuffle.classList.remove('active');
+            dom.settingToggleShuffle.textContent = "Shuffle: OFF";
+        }
+        
+        // Start With Button
+        if (state.deck.settings.termFirst) {
+            dom.settingToggleStartWith.classList.add('active');
+            dom.settingToggleStartWith.textContent = "Term";
+        } else {
+            dom.settingToggleStartWith.classList.remove('active');
+            dom.settingToggleStartWith.textContent = "Definition";
+        }
+    }
+    
+    function copyDeckToClipboard() {
+        const text = state.deck.cards.map(c => `${c.term},${c.definition}`).join('\n');
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("Deck copied to clipboard!");
+        }).catch(() => {
+            showToast("Failed to copy deck.");
+        });
+    }
+
 
     // --- Slider Logic ---
 
@@ -146,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 2. Extract Batch
-        // Determine how many to take (Batch Size or remainder)
         const count = Math.min(state.batchSize, state.sessionCards.length);
         
         // These are the cards for THIS round. 
@@ -301,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Check if more cards remain in the session
-        if (state.sessionCards.length >= 2) { // Need at least 2 for a match
+        if (state.sessionCards.length >= 2) { 
             // Auto-start next round after delay
             setTimeout(() => {
                 startRound();
