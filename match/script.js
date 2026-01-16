@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialization ---
 
     function init() {
+        // Fix for modal blocking issue: Ensure they are hidden on load
+        const modals = document.querySelectorAll('.modal-overlay');
+        modals.forEach(m => m.classList.remove('visible'));
+
         // 1. Get Deck from Shared Storage
         state.deck = window.TNQ.getDeck();
 
@@ -146,9 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const count = Math.min(state.batchSize, state.sessionCards.length);
         
         // These are the cards for THIS round. 
-        // We assume logic is: Render these, and remove them from sessionCards when matched.
-        // We slice them now for rendering, but the authoritative removal happens in checkMatch.
-        
         const roundCards = state.sessionCards.slice(0, count);
         state.itemsLeftInRound = count;
 

@@ -132,10 +132,10 @@
     </div>
 
     <!-- Modals (Required by Shared/nav.js and Shared/ui.css) -->
-    <!-- FIX: Added 'invisible' and 'opacity-0' to ensure they are hidden by default -->
+    <!-- Removed invisible/opacity-0 to prevent permanent hiding -->
     
     <!-- About Modal -->
-    <div id="about-modal-overlay" class="invisible opacity-0 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="about-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="about-modal-content" class="relative w-full max-w-md p-6 md:p-8 rounded-2xl">
             <button id="about-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
@@ -155,7 +155,7 @@
     </div>
 
     <!-- Settings Modal -->
-    <div id="settings-modal-overlay" class="invisible opacity-0 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="settings-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="settings-modal-content" class="relative w-full max-w-md p-6 md:p-8 rounded-2xl space-y-6">
             <button id="settings-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
@@ -188,7 +188,7 @@
     </div>
 
     <!-- Keybinds Modal -->
-    <div id="keybinds-modal-overlay" class="invisible opacity-0 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="keybinds-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="keybinds-modal-content" class="relative w-full max-w-lg p-6 md:p-8 rounded-2xl">
             <button id="keybinds-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
