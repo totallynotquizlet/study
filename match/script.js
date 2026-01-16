@@ -141,19 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 2. Extract Batch (Do not slice yet, we slice for display, removing on match)
-        // Actually, legacy logic kept cards in the array and removed them on match.
-        // But to support "Rounds", we need to know WHICH cards are in the current round.
-        // We will move cards from `sessionCards` to a `currentRoundCards` working set.
-        
+        // 2. Extract Batch
         // Determine how many to take (Batch Size or remainder)
         const count = Math.min(state.batchSize, state.sessionCards.length);
         
         // These are the cards for THIS round. 
-        // IMPORTANT: We do NOT remove them from state.sessionCards immediately?
-        // Legacy removed them on MATCH.
-        // So for now, we just pick the first `count` items to render.
-        // We will filter the `sessionCards` array as matches happen.
+        // We assume logic is: Render these, and remove them from sessionCards when matched.
+        // We slice them now for rendering, but the authoritative removal happens in checkMatch.
         
         const roundCards = state.sessionCards.slice(0, count);
         state.itemsLeftInRound = count;
@@ -281,9 +275,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (card) {
                 window.TNQ.updateCardResult(card, false);
-                // In legacy logic: incorrect card is pushed to back of session array.
-                // However, in this Round-based logic, the card is currently ON SCREEN.
-                // We don't need to move it in the array, it stays on screen until matched.
             }
 
             setTimeout(() => {

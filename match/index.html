@@ -107,7 +107,6 @@
 
         </main>
 
-        <!-- Full Footer Restored -->
         <footer class="text-center p-6 mt-8 border-t">
             <p class="mb-2">Created by Jacob Nedell</p>
             <div class="flex justify-center space-x-4">
@@ -133,9 +132,10 @@
     </div>
 
     <!-- Modals (Required by Shared/nav.js and Shared/ui.css) -->
+    <!-- FIX: Added 'invisible' and 'opacity-0' to ensure they are hidden by default -->
     
     <!-- About Modal -->
-    <div id="about-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="about-modal-overlay" class="invisible opacity-0 fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="about-modal-content" class="relative w-full max-w-md p-6 md:p-8 rounded-2xl">
             <button id="about-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
@@ -155,17 +155,12 @@
     </div>
 
     <!-- Settings Modal -->
-    <div id="settings-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="settings-modal-overlay" class="invisible opacity-0 fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="settings-modal-content" class="relative w-full max-w-md p-6 md:p-8 rounded-2xl space-y-6">
             <button id="settings-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
             <h2 class="text-2xl font-bold mb-4">Study Set Options</h2>
             
-            <!-- Note: Inputs here are present for UI consistency, but logic resides in Shared/script.js which isn't loaded here. 
-                 Since this is Match mode, we only load match/script.js. 
-                 The shared nav.js handles opening the modal, but logic to change settings (shuffle/title) 
-                 is deck-wide and usually handled by the main script. 
-                 For this static implementation, visual presence satisfies the "Shared File" requirement. -->
             <div>
                 <label for="setting-deck-title" class="create-label">DECK TITLE</label>
                 <input type="text" id="setting-deck-title" class="w-full" placeholder="Enter a title..." disabled>
@@ -193,7 +188,7 @@
     </div>
 
     <!-- Keybinds Modal -->
-    <div id="keybinds-modal-overlay" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="keybinds-modal-overlay" class="invisible opacity-0 fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="modal-backdrop fixed inset-0"></div>
         <div id="keybinds-modal-content" class="relative w-full max-w-lg p-6 md:p-8 rounded-2xl">
             <button id="keybinds-modal-close" class="absolute top-4 right-5 text-3xl font-bold">&times;</button>
