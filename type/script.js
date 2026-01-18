@@ -49,8 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
         restartButton: document.getElementById('type-restart-button'),
         switchModeButton: document.getElementById('type-switch-mode-button'),
 
-        // Settings Modal Elements (Present in index.html)
+        // Settings Modal Elements
         settingsButton: document.getElementById('settings-button'),
+        settingsModalOverlay: document.getElementById('settings-modal-overlay'),
+        settingsModalClose: document.getElementById('settings-modal-close'),
         settingDeckTitle: document.getElementById('setting-deck-title'),
         settingToggleShuffle: document.getElementById('setting-toggle-shuffle'),
         settingToggleStartWith: document.getElementById('setting-toggle-start-with'),
@@ -360,6 +362,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Modal Logic ---
+
+    function showSettingsModal() {
+        dom.settingsModalOverlay.classList.add('visible');
+    }
+
+    function hideSettingsModal() {
+        dom.settingsModalOverlay.classList.remove('visible');
+    }
+
     // --- Session Persistence ---
 
     function saveSession() {
@@ -505,7 +517,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dom.restartButton) dom.restartButton.addEventListener('click', startSession);
         if (dom.switchModeButton) dom.switchModeButton.addEventListener('click', () => TNQ.navigateTo('flashcards'));
 
-        // Settings
+        // Settings - Modal
+        if (dom.settingsButton) dom.settingsButton.addEventListener('click', showSettingsModal);
+        if (dom.settingsModalClose) dom.settingsModalClose.addEventListener('click', hideSettingsModal);
+        // Backdrop click
+        if (dom.settingsModalOverlay) {
+            dom.settingsModalOverlay.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-backdrop')) {
+                    hideSettingsModal();
+                }
+            });
+        }
+
+        // Settings - Functionality
         if (dom.settingToggleShuffle) dom.settingToggleShuffle.addEventListener('click', () => handleSettingsChange('shuffle'));
         if (dom.settingToggleStartWith) dom.settingToggleStartWith.addEventListener('click', () => handleSettingsChange('startWith'));
         if (dom.copyDeckButton) dom.copyDeckButton.addEventListener('click', copyDeckTerms);
