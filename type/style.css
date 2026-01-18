@@ -1,0 +1,87 @@
+/* --- Type Mode Specific Styles --- */
+
+#type-question-term {
+    font-size: 2rem;
+    font-weight: 700; /* Bolder */
+}
+
+#type-input-area {
+    background-color: var(--color-card-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius-button);
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+}
+
+#type-input-area:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-secondary);
+}
+
+#type-input-area:disabled {
+    background-color: var(--color-bg);
+    color: var(--color-text-secondary);
+}
+
+#type-submit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#type-feedback {
+    font-size: 1.1rem;
+    font-weight: 700; /* Bolder */
+    border-radius: var(--border-radius-button);
+    padding: 1rem;
+    /* Center align the contents */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#type-feedback.correct {
+    background-color: var(--color-correct-light);
+    color: var(--color-correct);
+}
+
+#type-feedback.incorrect {
+    background-color: var(--color-incorrect-light);
+    color: var(--color-incorrect);
+}
+
+#type-feedback.close {
+    background-color: var(--color-secondary-light);
+    color: var(--color-secondary);
+}
+
+#type-feedback-correct-answer {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+}
+
+/* Style for both override buttons as underlined text */
+.type-override-button {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    padding: 0;
+    margin-top: 0.75rem; /* 12px */
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.type-override-button:hover {
+    color: var(--color-text-primary);
+}
+
+/* Empty / Disabled States Text */
+#type-mode-disabled p,
+#type-complete-view p {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+}
